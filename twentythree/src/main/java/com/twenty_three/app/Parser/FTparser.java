@@ -1,10 +1,8 @@
-package com.twenty_three.app.parsers;
+package com.twenty_three.app.Parser;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Comparator;
 import org.jsoup.Jsoup;            
 import org.jsoup.nodes.Document;  
 import org.jsoup.nodes.Element;
