@@ -1,4 +1,4 @@
-package com.twenty_three.app;
+package com.twenty_three.app.Indexers;
 
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.document.Document;
@@ -9,7 +9,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import com.twenty_three.app.parsers.Constants;
+import com.twenty_three.app.Constants;
 import com.twenty_three.app.Models.Ftobj;
 import com.twenty_three.app.Parser.FTparser;
 import java.io.File;
