@@ -23,7 +23,7 @@ import java.util.Map;
 public class LATimesIndex {
 
     // Directory where the search index will be saved
-    private static final String INDEX_DIRECTORY = "/home/azureuser/lucene-search-engine/index";
+    private static final String INDEX_DIRECTORY = "/home/azureuser/lucene-search-engine/index/LAT";
 
     public void createLAIndex(String corpusDirectory) throws IOException {
         // Set up analyzers for each field
@@ -68,7 +68,7 @@ public class LATimesIndex {
                             doc.add(new StringField("date", latimesDoc.getDate(), Field.Store.YES));
                             doc.add(new StringField("section", latimesDoc.getSection(), Field.Store.YES));
                             doc.add(new StringField("length", latimesDoc.getLength(), Field.Store.YES));
-                            doc.add(new TextField("headline", latimesDoc.getHeadline(), Field.Store.YES));
+                            doc.add(new TextField("title", latimesDoc.getHeadline(), Field.Store.YES));
                             doc.add(new TextField("byline", latimesDoc.getByline(), Field.Store.YES));
                             doc.add(new TextField("text", latimesDoc.getText(), Field.Store.YES));
                             doc.add(new StringField("correctionDate", latimesDoc.getCorrectionDate(), Field.Store.YES));

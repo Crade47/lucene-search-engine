@@ -55,17 +55,17 @@ public class FTparser {
         return parsedata;
     }
 
-    public static void main(String[] args) throws IOException {
-        ArrayList<File> listf = traverseFile(Constants.documentpath);
-        if (listf.isEmpty()) {
-            return;
-        }
-        for (File archf : listf) {
-            System.out.println("Processing file: " + archf.getName());
-            ArrayList<Ftobj> archive = getDocuments(archf.getAbsolutePath());
+    // public static void main(String[] args) throws IOException {
+    //     ArrayList<File> listf = traverseFile(Constants.documentpath);
+    //     if (listf.isEmpty()) {
+    //         return;
+    //     }
+    //     for (File archf : listf) {
+    //         System.out.println("Processing file: " + archf.getName());
+    //         ArrayList<Ftobj> archive = getDocuments(archf.getAbsolutePath());
 
-        }
-    }
+    //     }
+    // }
 }
 
 
