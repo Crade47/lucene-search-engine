@@ -1,147 +1,115 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <!-- Basic project information -->
   <groupId>com.twenty_three.app</groupId>
   <artifactId>twentythree</artifactId>
   <version>1.0-SNAPSHOT</version>
-
   <name>twentythree</name>
-  <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
+  <url>http://maven.apache.org</url>
 
+  <!-- Project encoding and Java version settings -->
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
   </properties>
 
-  <!-- <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.junit</groupId>
-        <artifactId>junit-bom</artifactId>
-        <version>5.11.0</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement> -->
-
+  <!-- Project dependencies -->
   <dependencies>
-    <!-- Core Lucene dependency -->
+    <!-- Lucene core dependency -->
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-core</artifactId>
       <version>9.11.1</version>
     </dependency>
-
-    <!-- Lucene Analyzers for tokenization and text analysis -->
+    <!-- Lucene analysis-common dependency -->
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-analysis-common</artifactId>
       <version>9.11.1</version>
     </dependency>
-
-    <!-- Lucene QueryParser for parsing search queries -->
+    <!-- Lucene query parser dependency -->
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-queryparser</artifactId>
       <version>9.11.1</version>
     </dependency>
-
-    <!-- Lucene Miscellaneous utilities, including PerFieldAnalyzerWrapper -->
+    <!-- Lucene miscellaneous utility dependency -->
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-misc</artifactId>
       <version>9.11.1</version>
     </dependency>
 
-    <!-- JSoup dependency for parsing HTML/XML -->
+    <!-- JSoup dependency for HTML/XML parsing -->
     <dependency>
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>
       <version>1.16.1</version>
     </dependency>
-
-    <!-- MUST ENABLE THEM AT A LATER STAGE FOR TESTING -->
-    <!-- JUnit for testing -->
-    <!-- <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
-    </dependency> -->
-
-    <!-- <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-params</artifactId>
-      <scope>test</scope>
-    </dependency> -->
   </dependencies>
 
+  <!-- Build settings -->
   <build>
-    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to
-      parent pom) -->
+    <!-- Lock plugin versions -->
+    <pluginManagement>
       <plugins>
-        <!-- clean lifecycle, see
-        https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
+        <!-- Plugin for cleaning the project -->
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.4.0</version>
         </plugin>
-        <!-- default lifecycle, jar packaging: see
-        https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
+        <!-- Plugin for handling resources -->
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.3.1</version>
         </plugin>
+        <!-- Plugin for compiling Java code -->
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.13.0</version>
+          <version>3.11.0</version>
         </plugin>
+        <!-- Plugin for running unit tests -->
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.3.0</version>
+          <version>3.1.2</version>
         </plugin>
+        <!-- Plugin for packaging the application as a JAR -->
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.4.2</version>
+          <version>3.4.0</version>
         </plugin>
+        <!-- Plugin for installing the application in the local repository -->
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-install-plugin</artifactId>
-          <version>3.4.2</version>
+          <version>3.0.0-M1</version>
         </plugin>
+        <!-- Plugin for deploying the application to a remote repository -->
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>3.4.2</version>
+          <version>3.0.0-M1</version>
         </plugin>
-        <!-- site lifecycle, see
-        https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
-        <plugin>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>3.12.1</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>3.6.1</version>
-        </plugin>
-        
       </plugins>
     </pluginManagement>
+
+    <!-- Plugin configurations -->
     <plugins>
+      <!-- Maven Shade Plugin: used for packaging and specifying the main class -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.2.4</version>
+        <version>3.4.1</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -161,4 +129,12 @@
       </plugin>
     </plugins>
   </build>
+
+  <!-- Maven repository configuration (for custom repositories, if needed) -->
+  <repositories>
+    <repository>
+      <id>central</id>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+  </repositories>
 </project>

@@ -7,7 +7,7 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.*;
-import org.apache.lucene.search.similarities.BM25Similarity;
+import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.jsoup.Jsoup;
@@ -24,8 +24,10 @@ public class MultiDocSearcher {
     private static final String RESULT_FILE = "results.txt"; // output file path
     private static final int TOP_N = 1000; // Top N
 
-    public static void main(String[] args) throws Exception {
-        Analyzer analyzer = new EnglishAnalyzer();
+    public void search(Analyzer analyzer, Similarity similarity) throws Exception {
+        if (analyzer == null) {
+            analyzer = new EnglishAnalyzer();
+        }
         List<IndexSearcher> searchers = new ArrayList<>();
 
         // todo: Define field sets for each indexer
@@ -39,7 +41,7 @@ public class MultiDocSearcher {
                 Directory directory = FSDirectory.open(subDir.toPath());
                 DirectoryReader reader = DirectoryReader.open(directory);
                 IndexSearcher searcher = new IndexSearcher(reader);
-                searcher.setSimilarity(new BM25Similarity());
+                searcher.setSimilarity(similarity);
                 searchers.add(searcher);
             }
         }
@@ -90,7 +92,7 @@ public class MultiDocSearcher {
     }
 
     // Method to parse query file and create combined query for all document types
-    private static List<QueryEntry> parseQueries(Analyzer analyzer) throws IOException, ParseException {
+    private List<QueryEntry> parseQueries(Analyzer analyzer) throws IOException, ParseException {
         List<QueryEntry> queryEntries = new ArrayList<>();
         File input = new File(QUERY_FILE);
         org.jsoup.nodes.Document doc = Jsoup.parse(input, "UTF-8");

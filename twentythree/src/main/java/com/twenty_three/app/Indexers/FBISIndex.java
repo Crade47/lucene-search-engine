@@ -23,14 +23,17 @@ import java.util.Map;
 public class FBISIndex {
 
     // Directory where the search index will be saved
-    private static final String INDEX_DIRECTORY = "/home/azureuser/lucene-search-engine/index";
+    private static final String INDEX_DIRECTORY = "index/FBIS";
 
-    public void createFBISIndex(String corpusDirectory) throws IOException {
+    public void createFBISIndex(String corpusDirectory, Analyzer myAnalyzer) throws IOException {
         // Set up analyzers for each field
-        Analyzer defaultAnalyzer = new EnglishAnalyzer();
-        Map<String, Analyzer> analyzerMap = createAnalyzerMap();
+        if (myAnalyzer == null) {
+            myAnalyzer = new EnglishAnalyzer();
+        }
+        
+        Map<String, Analyzer> analyzerMap = createAnalyzerMap(myAnalyzer);
 
-        PerFieldAnalyzerWrapper analyzerWrapper = new PerFieldAnalyzerWrapper(defaultAnalyzer, analyzerMap);
+        PerFieldAnalyzerWrapper analyzerWrapper = new PerFieldAnalyzerWrapper(myAnalyzer, analyzerMap);
 
         // Open the directory where the index will be stored
         Directory directory = FSDirectory.open(Paths.get(INDEX_DIRECTORY));
@@ -72,19 +75,19 @@ public class FBISIndex {
         }
     }
 
-    private Map<String, Analyzer> createAnalyzerMap() {
+    private Map<String, Analyzer> createAnalyzerMap(Analyzer myAnalyzer) {
         Map<String, Analyzer> analyzerMap = new HashMap<>();
-        analyzerMap.put("docno", new EnglishAnalyzer());
-        analyzerMap.put("docid", new EnglishAnalyzer());
-        analyzerMap.put("date", new EnglishAnalyzer());
-        analyzerMap.put("region", new EnglishAnalyzer());
-        analyzerMap.put("country", new EnglishAnalyzer());
-        analyzerMap.put("eventSource", new EnglishAnalyzer());
-        analyzerMap.put("headline", new EnglishAnalyzer());
-        analyzerMap.put("language", new EnglishAnalyzer());
-        analyzerMap.put("originalId", new EnglishAnalyzer());
-        analyzerMap.put("text", new EnglishAnalyzer());
-        analyzerMap.put("additionalInfo", new EnglishAnalyzer());
+        analyzerMap.put("docno", myAnalyzer);
+        analyzerMap.put("docid", myAnalyzer);
+        analyzerMap.put("date", myAnalyzer);
+        analyzerMap.put("region", myAnalyzer);
+        analyzerMap.put("country", myAnalyzer);
+        analyzerMap.put("eventSource", myAnalyzer);
+        analyzerMap.put("headline", myAnalyzer);
+        analyzerMap.put("language", myAnalyzer);
+        analyzerMap.put("originalId", myAnalyzer);
+        analyzerMap.put("text", myAnalyzer);
+        analyzerMap.put("additionalInfo", myAnalyzer);
         return analyzerMap;
     }
 
