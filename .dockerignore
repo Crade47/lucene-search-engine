@@ -1,0 +1,5 @@
+target/*.jar
+!target/twentythree-1.0-SNAPSHOT.jar
+*.log
+*.iml
+.idea/
