@@ -47,8 +47,10 @@ public class FTIndex {
                 document.add(new TextField("byline", doc.getByline() != null ? doc.getByline() : "", Field.Store.YES));
 
                 writer.addDocument(document);
+
             }
         }
+        System.out.println("Indexing completed successfully FT!");
     }
 
     // public static void main(String[] args) {

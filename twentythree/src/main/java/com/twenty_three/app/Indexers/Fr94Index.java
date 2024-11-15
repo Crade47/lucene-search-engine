@@ -112,7 +112,7 @@ public class Fr94Index {
                     }
                 });
 
-            System.out.println("Indexing completed successfully!");
+            System.out.println("Indexing completed successfully! FR94");
 
         } finally {
             directory.close();

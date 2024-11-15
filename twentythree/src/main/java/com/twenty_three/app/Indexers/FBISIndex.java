@@ -65,7 +65,7 @@ public class FBISIndex {
                         }
                     });
 
-            System.out.println("Indexing completed successfully!");
+            System.out.println("Indexing completed successfully FBIS!");
 
         } finally {
             directory.close();

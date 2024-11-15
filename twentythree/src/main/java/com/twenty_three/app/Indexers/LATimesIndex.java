@@ -84,7 +84,7 @@ public class LATimesIndex {
                     }
                 });
 
-            System.out.println("Indexing completed successfully!");
+            System.out.println("Indexing completed successfully! LATIMES");
 
         } finally {
             directory.close();
