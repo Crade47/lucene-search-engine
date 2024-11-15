@@ -1,5 +1,6 @@
 package com.twenty_three.app.Indexers;
 
+import com.twenty_three.app.Constants;
 import com.twenty_three.app.Models.FBISDoc;
 import com.twenty_three.app.Parser.FBIS;
 import org.apache.lucene.analysis.Analyzer;
@@ -23,7 +24,7 @@ import java.util.Map;
 public class FBISIndex {
 
     // Directory where the search index will be saved
-    private static final String INDEX_DIRECTORY = "/home/azureuser/lucene-search-engine/index/FBIS";
+    private static final String INDEX_DIRECTORY = Constants.BASE_DIR + "/index/FBIS";
 
     public void createFBISIndex(String corpusDirectory) throws IOException {
         // Set up analyzers for each field

@@ -8,22 +8,21 @@ import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.ReaderUtil;
 import org.apache.lucene.index.StoredFields;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
-import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+
+import com.twenty_three.app.Constants;
 
 import java.io.*;
 import java.util.*;
 
 public class MultiDocSearcher {
-    private static final String INDEX_DIR = "index"; // index directory path
-    private static final String QUERY_FILE = "topics"; // query file path
-    private static final String RESULT_FILE = "results.txt"; // output file path
+    private static final String INDEX_DIR = Constants.BASE_DIR + "/index"; // index directory path
+    private static final String QUERY_FILE = Constants.BASE_DIR + "/topics"; // query file path
+    private static final String RESULT_FILE = Constants.BASE_DIR + "/results.txt"; // output file path
     private static final int TOP_N = 1000; // Top N
 
     public static void query() throws Exception {
@@ -32,11 +31,15 @@ public class MultiDocSearcher {
 
         // todo: Define field sets for each indexer
         List<String[]> fieldSets = new ArrayList<>();
-        fieldSets.add(new String[] { "title", "text" }); // Fields for indexer 1
+        fieldSets.add(new String[] { "title", "text" }); // Fields for indexer FBIS
+        fieldSets.add(new String[] { "title", "text" }); // Fields for indexer FR94
+        fieldSets.add(new String[] { "title", "text" }); // Fields for indexer FT
+        fieldSets.add(new String[] { "title", "text" }); // Fields for indexer LAT
 
         // Traverse each subdirectory in the index directory and create an IndexSearcher
         // for each
         File indexDir = new File(INDEX_DIR);
+        System.out.println(indexDir.exists());
         for (File subDir : Objects.requireNonNull(indexDir.listFiles())) {
             if (subDir.isDirectory()) {
                 Directory directory = FSDirectory.open(subDir.toPath());
@@ -46,7 +49,6 @@ public class MultiDocSearcher {
                 searchers.add(searcher);
             }
         }
-
         // Parse the query file
         List<QueryEntry> queryEntries = parseQueries(analyzer);
 
@@ -90,7 +92,7 @@ public class MultiDocSearcher {
                     // Write the result to the file
                     writer.printf("%s 0 %s %d %.4f STANDARD%n",
                             queryEntry.getQueryNo(),
-                            doc.get("doc_no"),
+                            doc.get("docno"),
                             rank,
                             result.getScore());
                     rank++;
@@ -105,25 +107,51 @@ public class MultiDocSearcher {
     }
 
     // Method to parse query file and create combined query for all document types
-    private static List<QueryEntry> parseQueries(Analyzer analyzer) throws IOException, ParseException {
+    private static List<QueryEntry> parseQueries(Analyzer analyzer) throws IOException {
         List<QueryEntry> queryEntries = new ArrayList<>();
-        File input = new File(QUERY_FILE);
-        org.jsoup.nodes.Document doc = Jsoup.parse(input, "UTF-8");
+        File queryFile = new File(QUERY_FILE);
 
-        Elements tops = doc.select("top"); // Select each query block
+        try (BufferedReader reader = new BufferedReader(new FileReader(queryFile))) {
+            String line;
+            String queryNo = null;
+            StringBuilder title = new StringBuilder();
+            StringBuilder desc = new StringBuilder();
+            StringBuilder narr = new StringBuilder();
 
-        for (Element top : tops) {
-            String queryNo = top.select("num").text().replace("Number: ", "").trim();
-            String title = top.select("title").text().trim();
-            String desc = top.select("desc").text().replace("Description:", "").trim();
-            String narr = top.select("narr").text().replace("Narrative:", "").trim();
-            String queryText = title + " " + desc + " " + narr;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
 
-            // Create a QueryEntry with the parsed query text and query number
-            queryEntries.add(new QueryEntry(queryNo, queryText));
+                if (line.startsWith("<num>")) {
+                    queryNo = line.replace("<num>", "").replace("Number:", "").trim();
+                } else if (line.startsWith("<title>")) {
+                    title.append(line.replace("<title>", "").trim()).append(" ");
+                } else if (line.startsWith("<desc>")) {
+                    while ((line = reader.readLine()) != null && !line.startsWith("<narr>")) {
+                        desc.append(line.trim()).append(" ");
+                    }
+                    if (line.startsWith("<narr>")) {
+                        while ((line = reader.readLine()) != null && !line.startsWith("</top>")) {
+                            narr.append(line.trim()).append(" ");
+                        }
+                    }
+                }
+
+                if (line != null && line.startsWith("</top>")) {
+                    String queryText = QueryParser.escape(title.toString().trim() + " " +
+                            desc.toString().trim() + " " +
+                            narr.toString().trim());
+                    queryEntries.add(new QueryEntry(queryNo, queryText));
+
+                    title.setLength(0);
+                    desc.setLength(0);
+                    narr.setLength(0);
+                }
+            }
         }
+
         return queryEntries;
     }
+
 }
 
 // Helper class to store query number and query text
