@@ -23,7 +23,7 @@ import java.util.Map;
 public class FBISIndex {
 
     // Directory where the search index will be saved
-    private static final String INDEX_DIRECTORY = "/home/azureuser/lucene-search-engine/index";
+    private static final String INDEX_DIRECTORY = "/home/azureuser/lucene-search-engine/index/FBIS";
 
     public void createFBISIndex(String corpusDirectory) throws IOException {
         // Set up analyzers for each field
@@ -65,7 +65,7 @@ public class FBISIndex {
                         }
                     });
 
-            System.out.println("Indexing completed successfully!");
+            System.out.println("Indexing completed successfully FBIS!");
 
         } finally {
             directory.close();
@@ -80,7 +80,7 @@ public class FBISIndex {
         analyzerMap.put("region", new EnglishAnalyzer());
         analyzerMap.put("country", new EnglishAnalyzer());
         analyzerMap.put("eventSource", new EnglishAnalyzer());
-        analyzerMap.put("headline", new EnglishAnalyzer());
+        analyzerMap.put("title", new EnglishAnalyzer());
         analyzerMap.put("language", new EnglishAnalyzer());
         analyzerMap.put("originalId", new EnglishAnalyzer());
         analyzerMap.put("text", new EnglishAnalyzer());
@@ -96,7 +96,7 @@ public class FBISIndex {
         doc.add(new StringField("region", fbisDoc.getRegion(), Field.Store.YES));
         doc.add(new StringField("country", fbisDoc.getCountry(), Field.Store.YES));
         doc.add(new TextField("eventSource", fbisDoc.getEventSource(), Field.Store.YES));
-        doc.add(new TextField("headline", fbisDoc.getHeadline(), Field.Store.YES));
+        doc.add(new TextField("title", fbisDoc.getHeadline(), Field.Store.YES));
         doc.add(new StringField("language", fbisDoc.getLanguage(), Field.Store.YES));
         doc.add(new StringField("originalId", fbisDoc.getOriginalId(), Field.Store.YES));
         doc.add(new TextField("text", fbisDoc.getText(), Field.Store.YES));

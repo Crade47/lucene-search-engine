@@ -4,6 +4,9 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.LeafReaderContext;
+import org.apache.lucene.index.ReaderUtil;
+import org.apache.lucene.index.StoredFields;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.*;
@@ -15,7 +18,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.*;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class MultiDocSearcher {
@@ -24,15 +26,16 @@ public class MultiDocSearcher {
     private static final String RESULT_FILE = "results.txt"; // output file path
     private static final int TOP_N = 1000; // Top N
 
-    public static void main(String[] args) throws Exception {
+    public static void query() throws Exception {
         Analyzer analyzer = new EnglishAnalyzer();
         List<IndexSearcher> searchers = new ArrayList<>();
 
         // todo: Define field sets for each indexer
         List<String[]> fieldSets = new ArrayList<>();
-        fieldSets.add(new String[]{"title", "content"}); // Fields for indexer 1
+        fieldSets.add(new String[] { "title", "text" }); // Fields for indexer 1
 
-        // Traverse each subdirectory in the index directory and create an IndexSearcher for each
+        // Traverse each subdirectory in the index directory and create an IndexSearcher
+        // for each
         File indexDir = new File(INDEX_DIR);
         for (File subDir : Objects.requireNonNull(indexDir.listFiles())) {
             if (subDir.isDirectory()) {
@@ -50,10 +53,10 @@ public class MultiDocSearcher {
         // Open result file writer
         try (PrintWriter writer = new PrintWriter(new FileWriter(RESULT_FILE))) {
             for (QueryEntry queryEntry : queryEntries) {
-                // For each query, search across all IndexSearchers with respective fields and collect results
+                // For each query, search across all IndexSearchers with respective fields and
+                // collect results
                 PriorityQueue<ScoreDocResult> topDocsQueue = new PriorityQueue<>(
-                        TOP_N, Comparator.comparingDouble(sd -> -sd.getScore())
-                );
+                        TOP_N, Comparator.comparingDouble(sd -> -sd.getScore()));
 
                 for (int i = 0; i < searchers.size(); i++) {
                     IndexSearcher searcher = searchers.get(i);
@@ -67,17 +70,29 @@ public class MultiDocSearcher {
                     for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                         topDocsQueue.add(new ScoreDocResult(scoreDoc, searcher, i));
                         if (topDocsQueue.size() > TOP_N) {
-                            topDocsQueue.poll();  // Keep only the top N results
+                            topDocsQueue.poll(); // Keep only the top N results
                         }
                     }
                 }
 
-                // Write the combined top N results to the result file
                 int rank = 1;
                 while (!topDocsQueue.isEmpty()) {
                     ScoreDocResult result = topDocsQueue.poll();
-                    Document doc = result.getSearcher().doc(result.getScoreDoc().doc);
-                    writer.printf("%s 0 %s %d %.4f STANDARD%n", queryEntry.getQueryNo(), doc.get("doc_no"), rank, result.getScore());
+
+                    // Retrieve the document using the recommended API
+                    int docID = result.getScoreDoc().doc;
+                    IndexSearcher searcher = result.getSearcher();
+                    LeafReaderContext leafContext = searcher.getIndexReader().leaves()
+                            .get(ReaderUtil.subIndex(docID, searcher.getIndexReader().leaves()));
+                    StoredFields storedFields = leafContext.reader().storedFields();
+                    Document doc = storedFields.document(docID - leafContext.docBase);
+
+                    // Write the result to the file
+                    writer.printf("%s 0 %s %d %.4f STANDARD%n",
+                            queryEntry.getQueryNo(),
+                            doc.get("doc_no"),
+                            rank,
+                            result.getScore());
                     rank++;
                 }
             }
