@@ -3,10 +3,12 @@ package com.twenty_three.app.Parser;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import org.jsoup.Jsoup;            
-import org.jsoup.nodes.Document;  
+
+import org.jsoup.Jsoup;  
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;  
+
 import com.twenty_three.app.Constants;
 import com.twenty_three.app.Models.Ftobj;
 
@@ -56,7 +58,7 @@ public class FTparser {
     }
 
     public static void main(String[] args) throws IOException {
-        ArrayList<File> listf = traverseFile(Constants.documentpath);
+        ArrayList<File> listf = traverseFile(Constants.DOCUMENT_PATH);
         if (listf.isEmpty()) {
             return;
         }

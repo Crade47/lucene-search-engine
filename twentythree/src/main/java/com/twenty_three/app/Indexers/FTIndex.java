@@ -1,5 +1,10 @@
 package com.twenty_three.app.Indexers;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -9,13 +14,10 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+
 import com.twenty_three.app.Constants;
 import com.twenty_three.app.Models.Ftobj;
 import com.twenty_three.app.Parser.FTparser;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 
 public class FTIndex {
 
@@ -44,7 +46,7 @@ public class FTIndex {
     public static void main(String[] args) {
         try {
             String indexDir = "path to where to store index";
-            ArrayList<File> files = FTparser.traverseFile(Constants.documentpath);
+            ArrayList<File> files = FTparser.traverseFile(Constants.DOCUMENT_PATH);
             ArrayList<Ftobj> allDocuments = new ArrayList<>();
 
             for (File file : files) {

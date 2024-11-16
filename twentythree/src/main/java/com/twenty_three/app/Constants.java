@@ -1,6 +1,6 @@
 package com.twenty_three.app;
 
-public class Constants {
+public final class Constants {
     public static final String docn = "DOC";
     public static final String docnon = "DOCNO";
     public static final String headlinen = "HEADLINE";
@@ -9,5 +9,6 @@ public class Constants {
     public static final String pubn = "PUB";
     public static final String daten = "DATE";
     public static final String profilen = "PROFILE";
-    public static final String documentpath = "path-to-corpus";
+    public static final String DOCUMENT_PATH = "path-to-corpus";
+    public static final String INDEX_PATH = "../index"; 
 }
