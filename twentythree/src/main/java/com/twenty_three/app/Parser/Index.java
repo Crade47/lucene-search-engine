@@ -1,4 +1,4 @@
-package com.twenty_three.app.parsers;
+package com.twenty_three.app.Parser;
 
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.document.Document;
@@ -9,11 +9,6 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import com.twenty_three.app.parsers.DocumentData;
-import com.twenty_three.app.parsers.FTparser;
-import com.twenty_three.app.parsers.FR94parser;
-import com.twenty_three.app.parsers.LAparser;
-import com.twenty_three.app.parsers.FBparser;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -29,7 +24,7 @@ interface ParserFunction {
 
 public class Index {
 
-    public static void main(String[] args) {
+    public static void index() {
         try {
             // Define the directory for storing the index
             Path indexPath = Paths.get("index");
@@ -72,25 +67,25 @@ public class Index {
 
         // Parse LA Times: Files directly under "latimes"
         System.out.println("Parsing LA Times documents...");
-        String laTimesPath = "/home/azureuser/lucene-search-engine/corpus/latimes";
+        String laTimesPath = "/home/azureuser/lucene-search-engine/twentythree/corpus/latimes";
         allDocuments.addAll(parseFilesInDirectory(laTimesPath, LAparser::parseLATimes));
         System.out.println("LA Times indexing complete!");
 
-        // Parse Financial Times: Nested folders with files in "ft"
+        //Parse Financial Times: Nested folders with files in "ft"
         System.out.println("Parsing Financial Times documents...");
-        String ftPath = "/home/azureuser/lucene-search-engine/corpus/ft";
+        String ftPath = "/home/azureuser/lucene-search-engine/twentythree/corpus/ft";
         allDocuments.addAll(parseNestedFilesInDirectory(ftPath, FTparser::parseFT));
         System.out.println("Financial Times indexing complete!");
 
         // Parse FR94: Nested folders with files in "fr94"
         System.out.println("Parsing FR94 documents...");
-        String fr94Path = "/home/azureuser/lucene-search-engine/corpus/fr94";
+        String fr94Path = "/home/azureuser/lucene-search-engine/twentythree/corpus/fr94";
         allDocuments.addAll(parseNestedFilesInDirectory(fr94Path, FR94parser::parseFR94));
         System.out.println("FR94 indexing complete!");
 
         // Parse FBIS: Files directly under "fbis"
         System.out.println("Parsing FBIS documents...");
-        String fbisPath = "/home/azureuser/lucene-search-engine/corpus/fbis";
+        String fbisPath = "/home/azureuser/lucene-search-engine/twentythree/corpus/fbis";
         allDocuments.addAll(parseFilesInDirectory(fbisPath, FBparser::parseFBIS));
         System.out.println("FBIS indexing complete!");
 

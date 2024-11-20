@@ -1,4 +1,4 @@
-package com.twenty_three.app.parsers;
+package com.twenty_three.app.Parser;
 
 public class DocumentData {
     private String docNo;

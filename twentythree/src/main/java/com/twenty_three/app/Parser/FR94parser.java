@@ -1,4 +1,4 @@
-package com.twenty_three.app.parsers;
+package com.twenty_three.app.Parser;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import com.twenty_three.app.parsers.DocumentData;
+import com.twenty_three.app.Parser.DocumentData;
 
 public class FR94parser {
     public static List<DocumentData> parseFR94(String filePath) throws Exception {

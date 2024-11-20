@@ -1,4 +1,4 @@
-package com.twenty_three.app.parsers;
+package com.twenty_three.app.Parser;
 
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.document.Document;
@@ -23,10 +23,10 @@ import java.util.Map;
 
 public class Search {
 
-    public static void main(String[] args) {
+    public static void search() {
         try {
             // Define the directory where the index is stored
-            Path indexPath = Paths.get("index");
+            Path indexPath = Paths.get("/home/azureuser/lucene-search-engine/twentythree/index");
             IndexReader reader = DirectoryReader.open(FSDirectory.open(indexPath));
             IndexSearcher searcher = new IndexSearcher(reader);
 
@@ -43,7 +43,7 @@ public class Search {
             );
 
             // Path to the topics file
-            String topicsFilePath = "/home/azureuser/lucene-search-engine/topics";
+            String topicsFilePath = "/home/azureuser/lucene-search-engine/twentythree/topics";
             File topicsFile = new File(topicsFilePath);
 
             // Output file for top 1000 results in TREC format
