@@ -1,14 +1,17 @@
 package com.twenty_three.app.parsers;
 
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.QueryParserBase;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.queries.mlt.MoreLikeThisQuery;
 
 import java.io.File;
 import java.io.BufferedReader;
@@ -25,9 +28,12 @@ public class Search {
 
     public static void main(String[] args) {
         try {
-            // Define the directory where the index is stored
-            Path indexPath = Paths.get("index");
-            IndexReader reader = DirectoryReader.open(FSDirectory.open(indexPath));
+            // Get the index path and topics file path from command-line arguments or default values
+            String indexPath = args.length > 0 ? args[0] : "index";
+            String topicsFilePath = args.length > 1 ? args[1] : "/home/azureuser/lucene-search-engine/twentythree/topics";
+
+            // Open the Lucene index
+            IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
             IndexSearcher searcher = new IndexSearcher(reader);
 
             // Set BM25 as the similarity model
@@ -36,62 +42,65 @@ public class Search {
             // Use the EnglishAnalyzer for querying
             EnglishAnalyzer analyzer = new EnglishAnalyzer();
 
-            // Use MultiFieldQueryParser for querying content and title
-            MultiFieldQueryParser parser = new MultiFieldQueryParser(
-                new String[]{"content", "title"}, // Fields to search
-                analyzer
-            );
+            // Dynamic field weighting (ensure field names match the index)
+            Map<String, Float> boosts = new HashMap<>();
+            boosts.put("title", 0.1f);
+            boosts.put("content", 0.9f);
 
-            // Path to the topics file
-            String topicsFilePath = "/home/azureuser/lucene-search-engine/topics";
-            File topicsFile = new File(topicsFilePath);
+            MultiFieldQueryParser parser = new MultiFieldQueryParser(new String[]{"title", "content"}, analyzer, boosts);
 
             // Output file for top 1000 results in TREC format
             try (BufferedWriter writer = new BufferedWriter(new FileWriter("top1000_results_topics.txt"))) {
-                try (BufferedReader br = new BufferedReader(new FileReader(topicsFile))) {
+                try (BufferedReader br = new BufferedReader(new FileReader(topicsFilePath))) {
                     String line;
                     String topicId = null;
                     StringBuilder queryBuilder = new StringBuilder();
-                    boolean insideDesc = false; // Flag to track whether inside a <desc> block
+                    boolean insideDesc = false;
 
                     while ((line = br.readLine()) != null) {
                         line = line.trim();
 
                         if (line.startsWith("<num>")) {
-                            // Extract topic ID
                             topicId = line.replace("<num>", "").replace("Number:", "").trim();
                         } else if (line.startsWith("<title>")) {
-                            // Extract title as the main query
                             queryBuilder.append(line.replace("<title>", "").trim()).append(" ");
                         } else if (line.startsWith("<desc>")) {
-                            // Start of description block
                             insideDesc = true;
                             queryBuilder.append(line.replace("<desc>", "").replace("Description:", "").trim()).append(" ");
                         } else if (line.startsWith("</top>")) {
-                            // End of topic, process the query
-                            insideDesc = false; // Reset the flag
+                            insideDesc = false;
+
+                            // Validate topic ID and query before proceeding
                             if (topicId != null && queryBuilder.length() > 0) {
                                 String queryText = queryBuilder.toString().trim();
-                                queryBuilder.setLength(0); // Clear the builder for the next topic
+                                queryBuilder.setLength(0); // Reset query builder for next topic
 
                                 System.out.printf("Querying Topic %s: %s%n", topicId, queryText);
 
-                                // Parse and execute the query
-                                Query query = parser.parse(QueryParserBase.escape(queryText));
-                                TopDocs results = searcher.search(query, 1000); // Top 1000 results
+                                // Base query
+                                Query baseQuery = parser.parse(QueryParserBase.escape(queryText));
+                                TopDocs baseResults = searcher.search(baseQuery, 1000);
+
+                                // Query Expansion
+                                Query expandedQuery = expandQuery(searcher, analyzer, baseQuery, reader);
+
+                                // Search with expanded query
+                                TopDocs expandedResults = searcher.search(expandedQuery, 1000);
 
                                 // Write results in TREC format
-                                for (int i = 0; i < results.scoreDocs.length; i++) {
-                                    ScoreDoc scoreDoc = results.scoreDocs[i];
+                                for (int i = 0; i < expandedResults.scoreDocs.length; i++) {
+                                    ScoreDoc scoreDoc = expandedResults.scoreDocs[i];
                                     Document doc = searcher.doc(scoreDoc.doc);
                                     String docNo = doc.get("docno");
-                                    float score = scoreDoc.score;
 
-                                    writer.write(String.format("%s Q0 %s %d %.4f Lucene-Search\n", topicId, docNo, i + 1, score));
+                                    // Validate docNo before writing
+                                    if (docNo != null && !docNo.isEmpty()) {
+                                        float score = scoreDoc.score;
+                                        writer.write(String.format("%s Q0 %s %d %.4f Expanded\n", topicId, docNo, i + 1, score));
+                                    }
                                 }
                             }
                         } else if (insideDesc) {
-                            // Append subsequent lines of the description
                             queryBuilder.append(line).append(" ");
                         }
                     }
@@ -103,5 +112,39 @@ public class Search {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Expands a query using `MoreLikeThisQuery` for relevance feedback.
+     *
+     * @param searcher The IndexSearcher instance
+     * @param analyzer The Analyzer to use
+     * @param baseQuery The original query
+     * @param reader The IndexReader instance
+     * @return The expanded query
+     * @throws IOException If an error occurs during query expansion
+     */
+    private static Query expandQuery(IndexSearcher searcher, Analyzer analyzer, Query baseQuery, IndexReader reader) throws IOException {
+        BooleanQuery.Builder expandedQueryBuilder = new BooleanQuery.Builder();
+        expandedQueryBuilder.add(baseQuery, BooleanClause.Occur.SHOULD); // Original query
+
+        // Retrieve top 4 documents for query expansion
+        TopDocs topDocs = searcher.search(baseQuery, 4);
+
+        for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+            Document doc = reader.document(scoreDoc.doc);
+            String content = doc.get("content");
+
+            // Validate content before using it
+            if (content != null && !content.trim().isEmpty()) {
+                MoreLikeThisQuery mltQuery = new MoreLikeThisQuery(content, new String[]{"content"}, analyzer, "content");
+                Query rewrittenQuery = mltQuery.rewrite(reader);
+
+                // Add the rewritten query to the expanded query
+                expandedQueryBuilder.add(rewrittenQuery, BooleanClause.Occur.SHOULD);
+            }
+        }
+
+        return expandedQueryBuilder.build();
     }
 }

@@ -7,67 +7,97 @@ import org.jsoup.nodes.Element;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import com.twenty_three.app.parsers.DocumentData;
 
 public class FBparser {
-    public static List<DocumentData> parseFBIS(String filePath) throws Exception {
-        List<DocumentData> documents = new ArrayList<>();
-        String content = new String(Files.readAllBytes(Paths.get(filePath)), "UTF-8");
 
-        // Parse the file as XML
-        Document soup = Jsoup.parse(content, "", org.jsoup.parser.Parser.xmlParser());
+    // Predefined tags to process or clean
+    private static final List<String> TAGS_TO_REMOVE = Arrays.asList(
+        "TI", "HT", "PHRASE", "DATE1", "ABS", "FIG",
+        "H1", "H2", "H3", "H4", "H5", "H6", "H7", "H8",
+        "TR", "TXT5", "HEADER", "TEXT", "AU"
+    );
 
-        // Loop through each <DOC> block
-        for (Element doc : soup.select("DOC")) {
+    /**
+     * Parses FBIS documents and extracts relevant fields.
+     *
+     * @param filePath Path to the FBIS document file.
+     * @return A list of DocumentData objects containing the parsed fields.
+     * @throws Exception if an error occurs while reading the file.
+     */
+    public List<DocumentData> parseFBIS(String filePath) throws Exception {
+        List<DocumentData> parsedDocuments = new ArrayList<>();
+        String filecontent = new String(Files.readAllBytes(Paths.get(filePath)), "UTF-8");
+
+        // Parse the content as XML
+        Document parsedXml = Jsoup.parse(filecontent, "", org.jsoup.parser.Parser.xmlParser());
+
+        // Process each <DOC> element
+        for (Element docElement : parsedXml.select("DOC")) {
             try {
-                // Extract <DOCNO>
-                String docNo = getTextOrNull(doc, "DOCNO");
+                // Extract document number
+                String documentNumber = extractTagText(docElement, "DOCNO");
 
-                // Extract <H3> and <TI> (title) from <HEADER> if available
-                String title = null;
-                Element headerElement = doc.selectFirst("HEADER");
-                if (headerElement != null) {
-                    Element h3Element = headerElement.selectFirst("H3");
-                    if (h3Element != null) {
-                        Element tiElement = h3Element.selectFirst("TI");
-                        if (tiElement != null) {
-                            title = tiElement.text();
-                        }
-                    }
+                // Extract and clean text content
+                String documentText = extractTagText(docElement, "TEXT");
+                if (documentText != null) {
+                    documentText = removeSpecificTags(documentText);
                 }
 
-                // Extract <TEXT> content
-                String text = getTextOrNull(doc, "TEXT");
+                // Extract date
+                String documentDate = extractTagText(docElement, "DATE1");
 
-                // Extract <DATE1> from <HEADER>
-                String date = null;
-                if (headerElement != null) {
-                    Element dateElement = headerElement.selectFirst("DATE1");
-                    if (dateElement != null) {
-                        date = dateElement.text();
+                // Construct a combined title from hierarchical tags
+                StringBuilder titleBuilder = new StringBuilder();
+                for (int level = 3; level <= 8; level++) {
+                    String tagName = "H" + level;
+                    Element tagElement = docElement.selectFirst(tagName);
+                    if (tagElement != null) {
+                        titleBuilder.append(tagElement.text()).append(" ");
                     }
                 }
+                String documentTitle = titleBuilder.toString().trim();
 
-                // Add the parsed document data to the list
-                documents.add(new DocumentData(docNo, title, text, date, null));
+                // Add the parsed document to the list
+                parsedDocuments.add(new DocumentData(documentNumber, documentTitle, documentText, documentDate));
             } catch (Exception e) {
-                // Log any issues with parsing specific documents
                 System.err.println("Error parsing document: " + e.getMessage());
             }
         }
-        return documents;
+
+        return parsedDocuments;
     }
 
     /**
-     * Retrieves the text content of a given tag or returns null if the tag is missing.
+     * Extracts text content from a specific tag in the document.
      *
-     * @param parent The parent element to search within
-     * @param tagName The tag name to search for
-     * @return Text content of the tag, or null if not found
+     * @param parent The parent element to search within.
+     * @param tagName The tag name to extract.
+     * @return Text content of the tag, or null if not found.
      */
-    private static String getTextOrNull(Element parent, String tagName) {
-        Element element = parent.selectFirst(tagName);
-        return element != null ? element.text() : null;
+    private String extractTagText(Element parent, String tagName) {
+        Element tagElement = parent.selectFirst(tagName);
+        return tagElement != null ? tagElement.text() : null;
+    }
+
+    /**
+     * Cleans the text content by removing specific predefined tags.
+     *
+     * @param content The original text content to clean.
+     * @return Cleaned text without the specified tags.
+     */
+    private String removeSpecificTags(String content) {
+        // Replace newlines and square brackets
+        content = content.replaceAll("\\[|\\]", "").replaceAll("\n", " ").trim();
+
+        // Remove each tag in the predefined list
+        for (String tag : TAGS_TO_REMOVE) {
+            content = content.replaceAll("<" + tag + ">", "")
+                             .replaceAll("</" + tag + ">", "");
+        }
+
+        return content;
     }
 }
