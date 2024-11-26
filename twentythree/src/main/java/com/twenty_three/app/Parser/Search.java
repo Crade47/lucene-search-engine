@@ -1,6 +1,7 @@
-package com.twenty_three.app.parsers;
+package com.twenty_three.app.Parser;
 
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -12,6 +13,7 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.queries.mlt.MoreLikeThisQuery;
+import com.twenty_three.app.Parser.CustomAnalyzer;
 
 import java.io.File;
 import java.io.BufferedReader;
@@ -26,11 +28,11 @@ import java.util.Map;
 
 public class Search {
 
-    public static void main(String[] args) {
+    public static void search() {
         try {
             // Get the index path and topics file path from command-line arguments or default values
-            String indexPath = args.length > 0 ? args[0] : "index";
-            String topicsFilePath = args.length > 1 ? args[1] : "/home/azureuser/lucene-search-engine/twentythree/topics";
+            String indexPath =  "index";
+            String topicsFilePath = "/vol/bitbucket/ss8923/lucene-search-engine/twentythree/topics";
 
             // Open the Lucene index
             IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
@@ -40,8 +42,7 @@ public class Search {
             searcher.setSimilarity(new BM25Similarity());
 
             // Use the EnglishAnalyzer for querying
-            EnglishAnalyzer analyzer = new EnglishAnalyzer();
-
+            CustomAnalyzer analyzer = new CustomAnalyzer();
             // Dynamic field weighting (ensure field names match the index)
             Map<String, Float> boosts = new HashMap<>();
             boosts.put("title", 0.1f);
