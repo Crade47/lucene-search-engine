@@ -5,8 +5,8 @@ package com.twenty_three.app.Parser;
  */
 public class App {
     public static void main(String[] args) {
-        Index.index();
-        Search.search();
+        Index.index(analyzer,similarity);
+        Search.search(analyzer,similarity);
 
     }
 }

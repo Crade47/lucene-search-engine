@@ -33,60 +33,80 @@
   <dependencies>
     <!-- Core Lucene dependency -->
     <dependency>
-      <groupId>org.apache.lucene</groupId>
-      <artifactId>lucene-core</artifactId>
-      <version>9.11.1</version>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-core</artifactId>
+        <version>9.11.1</version>
     </dependency>
 
     <!-- Lucene Analyzers for tokenization and text analysis -->
     <dependency>
-      <groupId>org.apache.lucene</groupId>
-      <artifactId>lucene-analysis-common</artifactId>
-      <version>9.11.1</version>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-analysis-common</artifactId>
+        <version>9.11.1</version>
     </dependency>
 
     <!-- Lucene QueryParser for parsing search queries -->
     <dependency>
-      <groupId>org.apache.lucene</groupId>
-      <artifactId>lucene-queryparser</artifactId>
-      <version>9.11.1</version>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-queryparser</artifactId>
+        <version>9.11.1</version>
     </dependency>
 
     <!-- Lucene Miscellaneous utilities, including PerFieldAnalyzerWrapper -->
     <dependency>
-      <groupId>org.apache.lucene</groupId>
-      <artifactId>lucene-misc</artifactId>
-      <version>9.11.1</version>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-misc</artifactId>
+        <version>9.11.1</version>
+    </dependency>
+
+    <!-- Optional: Lucene Highlighter for search result highlighting -->
+    <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-highlighter</artifactId>
+        <version>9.11.1</version>
+    </dependency>
+
+    <!-- Optional: Lucene Suggest for auto-suggestions -->
+    <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-suggest</artifactId>
+        <version>9.11.1</version>
+    </dependency>
+
+    <!-- Optional: Lucene Facet for faceted search -->
+    <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-facet</artifactId>
+        <version>9.11.1</version>
+    </dependency>
+
+    <!-- Optional: Lucene Demo for testing and examples -->
+    <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-demo</artifactId>
+        <version>9.11.1</version>
     </dependency>
 
     <!-- JSoup dependency for parsing HTML/XML -->
     <dependency>
-      <groupId>org.jsoup</groupId>
-      <artifactId>jsoup</artifactId>
-      <version>1.16.1</version>
+        <groupId>org.jsoup</groupId>
+        <artifactId>jsoup</artifactId>
+        <version>1.16.1</version>
     </dependency>
 
-    <!-- MUST ENABLE THEM AT A LATER STAGE FOR TESTING -->
-    <!-- JUnit for testing -->
-    <!-- <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
-    </dependency> -->
-
+    <!-- Uncomment for JUnit testing -->
     <!-- <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-params</artifactId>
+      <artifactId>junit-jupiter-engine</artifactId>
       <scope>test</scope>
     </dependency> -->
-  </dependencies>
+</dependencies>
+
 
   <build>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to

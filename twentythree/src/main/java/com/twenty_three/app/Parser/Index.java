@@ -11,13 +11,14 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.search.similarities.Similarity;
 import com.twenty_three.app.Parser.DocumentData;
 import com.twenty_three.app.Parser.FTparser;
 import com.twenty_three.app.Parser.FR94parser;
 import com.twenty_three.app.Parser.LAparser;
 import com.twenty_three.app.Parser.FBparser;
-import com.twenty_three.app.Parser.CustomAnalyzer;
+import com.twenty_three.app.Parser.MySynonymAnalyzer;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import java.io.File;
@@ -35,18 +36,19 @@ interface ParserFunction {
 
 public class Index {
 
-    public static void index() {
+    public static void index(Analyzer _Analyzer, Similarity _Similarity) {
         try {
             // Define the directory for storing the index
             Path indexPath = Paths.get("index");
             Directory directory = FSDirectory.open(indexPath);
 
             // Set up the Lucene analyzer and similarity
-            CustomAnalyzer analyzer = new CustomAnalyzer();
-            BM25Similarity similarity = new BM25Similarity();
+            //Analyzer analyzer = new MySynonymAnalyzer("/vol/bitbucket/ss8923/lucene-search-engine/twentythree/wn_s.pl");
+            //MySynonymAnalayzer analyzer =new MySynonymAnalayzer("/vol/bitbucket/ss8923/lucene-search-engine/twentythree/wn_s.pl");
+            //Similarity similarity = new BM25Similarity();
 
             // Create the IndexWriter
-            IndexWriterConfig config = configureIndexWriter(analyzer, similarity);
+            IndexWriterConfig config = configureIndexWriter(_Analyzer, _Similarity);
             try (IndexWriter writer = new IndexWriter(directory, config)) {
                 // Parse and combine all datasets
                 List<DocumentData> parsedDocuments = parseAllCollections();

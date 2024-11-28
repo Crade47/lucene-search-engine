@@ -11,9 +11,10 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.QueryParserBase;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.similarities.BM25Similarity;
+import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.queries.mlt.MoreLikeThisQuery;
-import com.twenty_three.app.Parser.CustomAnalyzer;
+import com.twenty_three.app.Parser.EnglishAnalyzerCustom;
 
 import java.io.File;
 import java.io.BufferedReader;
@@ -28,7 +29,7 @@ import java.util.Map;
 
 public class Search {
 
-    public static void search() {
+    public static void search(Analyzer _Analyzer, Similarity _Similarity) {
         try {
             // Get the index path and topics file path from command-line arguments or default values
             String indexPath =  "index";
@@ -39,16 +40,17 @@ public class Search {
             IndexSearcher searcher = new IndexSearcher(reader);
 
             // Set BM25 as the similarity model
-            searcher.setSimilarity(new BM25Similarity());
+            searcher.setSimilarity(_Similarity);
 
             // Use the EnglishAnalyzer for querying
-            CustomAnalyzer analyzer = new CustomAnalyzer();
+           // MySynonymAnalayzer analyzer = new MySynonymAnalayzer("/vol/bitbucket/ss8923/lucene-search-engine/twentythree/wn_s.pl");
             // Dynamic field weighting (ensure field names match the index)
+            //Analyzer analyzer = new MySynonymAnalyzer("/vol/bitbucket/ss8923/lucene-search-engine/twentythree/wn_s.pl");
             Map<String, Float> boosts = new HashMap<>();
             boosts.put("title", 0.1f);
             boosts.put("content", 0.9f);
 
-            MultiFieldQueryParser parser = new MultiFieldQueryParser(new String[]{"title", "content"}, analyzer, boosts);
+            MultiFieldQueryParser parser = new MultiFieldQueryParser(new String[]{"title", "content"}, _Analyzer, boosts);
 
             // Output file for top 1000 results in TREC format
             try (BufferedWriter writer = new BufferedWriter(new FileWriter("top1000_results_topics.txt"))) {
@@ -83,7 +85,7 @@ public class Search {
                                 TopDocs baseResults = searcher.search(baseQuery, 1000);
 
                                 // Query Expansion
-                                Query expandedQuery = expandQuery(searcher, analyzer, baseQuery, reader);
+                                Query expandedQuery = expandQuery(searcher, _Analyzer, baseQuery, reader);
 
                                 // Search with expanded query
                                 TopDocs expandedResults = searcher.search(expandedQuery, 1000);
