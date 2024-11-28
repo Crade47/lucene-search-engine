@@ -1,0 +1,32 @@
+map increase slightly when basequery docu is 3  not 4
+azureuser@akudeg:~/lucene-search-engine/twentythree/trec_eval$ ./trec_eval /home/azureuser/lucene-search-engine/twentythree/qrels.assignment2.part1 /home/azureuser/lucene-search-engine/twentythree/top1000_results_topics.txt
+runid                   all     Expanded
+num_q                   all     25
+num_ret                 all     25000
+num_rel                 all     2132
+num_rel_ret             all     1588
+map                     all     0.3540
+gm_map                  all     0.2725
+Rprec                   all     0.3914
+bpref                   all     0.3462
+recip_rank              all     0.8884
+iprec_at_recall_0.00    all     0.9293
+iprec_at_recall_0.10    all     0.6787
+iprec_at_recall_0.20    all     0.5450
+iprec_at_recall_0.30    all     0.4790
+iprec_at_recall_0.40    all     0.4342
+iprec_at_recall_0.50    all     0.3529
+iprec_at_recall_0.60    all     0.2672
+iprec_at_recall_0.70    all     0.2218
+iprec_at_recall_0.80    all     0.1591
+iprec_at_recall_0.90    all     0.0860
+iprec_at_recall_1.00    all     0.0106
+P_5                     all     0.6480
+P_10                    all     0.6080
+P_15                    all     0.5573
+P_20                    all     0.5200
+P_30                    all     0.4773
+P_100                   all     0.3104
+P_200                   all     0.2088
+P_500                   all     0.1094
+P_1000                  all     0.0635
