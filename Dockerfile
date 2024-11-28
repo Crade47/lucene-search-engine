@@ -23,8 +23,12 @@ RUN mvn --version
 # Set working directory
 WORKDIR /app
 
+RUN mkdir corpus
+
 # Copy application source files
 COPY . .
+
+RUN mv /app/twentythree/corpus/* /app/corpus
 
 # Change directory to the one with the pom.xml
 WORKDIR /app/twentythree
