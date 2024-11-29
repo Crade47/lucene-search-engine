@@ -657,7 +657,7 @@ P_200                   all     0.1608
 P_500                   all     0.0893
 P_1000                  all     0.0530
 
-CLASSIC:
+              classic:
 
 runid                   all     EnglishAnalyzer
 num_q                   all     25
@@ -690,7 +690,7 @@ P_200                   all     0.1448
 P_500                   all     0.0806
 P_1000                  all     0.0476
 
-BOOLEAN:
+           boolean
 ics.txt
 runid                   all     EnglishAnalyzer
 num_q                   all     25
@@ -724,7 +724,9 @@ P_500                   all     0.0194
 P_1000                  all     0.0142
 
 
-lmjelinekmercer:
+      lmjelinekmercer:
+
+
 runid                   all     EnglishAnalyzer
 num_q                   all     25
 num_ret                 all     24999
@@ -756,7 +758,7 @@ P_200                   all     0.1628
 P_500                   all     0.0938
 P_1000                  all     0.0550
 
-lmdirichlet:
+          lmdirichlet:
 
 
 runid                   all     EnglishAnalyzer
