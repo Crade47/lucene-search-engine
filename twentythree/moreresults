@@ -357,3 +357,176 @@ P_200                   all     0.1974
 P_500                   all     0.1043
 P_1000                  all     0.0613
 
+
+
+WHITESPACE
+
+        switch (choice.toLowerCase()) {
+            case "bm25":
+runid                   all     EnglishAnalyzer
+num_q                   all     25
+num_ret                 all     25000
+num_rel                 all     2132
+num_rel_ret             all     1168
+map                     all     0.2381
+gm_map                  all     0.1207
+Rprec                   all     0.2792
+bpref                   all     0.2529
+recip_rank              all     0.7433
+iprec_at_recall_0.00    all     0.7725
+iprec_at_recall_0.10    all     0.5339
+iprec_at_recall_0.20    all     0.4210
+iprec_at_recall_0.30    all     0.3131
+iprec_at_recall_0.40    all     0.2665
+iprec_at_recall_0.50    all     0.2131
+iprec_at_recall_0.60    all     0.1582
+iprec_at_recall_0.70    all     0.1206
+iprec_at_recall_0.80    all     0.0791
+iprec_at_recall_0.90    all     0.0327
+iprec_at_recall_1.00    all     0.0105
+P_5                     all     0.5360
+P_10                    all     0.4840
+P_15                    all     0.4347
+P_20                    all     0.3980
+P_30                    all     0.3453
+P_100                   all     0.2084
+P_200                   all     0.1458
+P_500                   all     0.0802
+P_1000                  all     0.0467
+
+
+
+
+
+            case "classic":
+
+num_q                   all     25
+num_ret                 all     25000
+num_rel                 all     2132
+num_rel_ret             all     927
+map                     all     0.1780
+gm_map                  all     0.0807
+Rprec                   all     0.2386
+bpref                   all     0.2169
+recip_rank              all     0.5804
+iprec_at_recall_0.00    all     0.6336
+iprec_at_recall_0.10    all     0.4397
+iprec_at_recall_0.20    all     0.3218
+iprec_at_recall_0.30    all     0.2531
+iprec_at_recall_0.40    all     0.2112
+iprec_at_recall_0.50    all     0.1485
+iprec_at_recall_0.60    all     0.1174
+iprec_at_recall_0.70    all     0.0724
+iprec_at_recall_0.80    all     0.0484
+iprec_at_recall_0.90    all     0.0243
+iprec_at_recall_1.00    all     0.0040
+P_5                     all     0.4240
+P_10                    all     0.4240
+P_15                    all     0.3733
+P_20                    all     0.3440
+P_30                    all     0.3067
+P_100                   all     0.1716
+P_200                   all     0.1122
+P_500                   all     0.0620
+P_1000                  all     0.0371
+            case "boolean":
+
+runid                   all     EnglishAnalyzer
+num_q                   all     25
+num_ret                 all     25000
+num_rel                 all     2132
+num_rel_ret             all     272
+map                     all     0.0121
+gm_map                  all     0.0033
+Rprec                   all     0.0280
+bpref                   all     0.0254
+recip_rank              all     0.1695
+iprec_at_recall_0.00    all     0.1887
+iprec_at_recall_0.10    all     0.0410
+iprec_at_recall_0.20    all     0.0216
+iprec_at_recall_0.30    all     0.0113
+iprec_at_recall_0.40    all     0.0093
+iprec_at_recall_0.50    all     0.0038
+iprec_at_recall_0.60    all     0.0018
+iprec_at_recall_0.70    all     0.0018
+iprec_at_recall_0.80    all     0.0000
+iprec_at_recall_0.90    all     0.0000
+iprec_at_recall_1.00    all     0.0000
+P_5                     all     0.0560
+P_10                    all     0.0600
+P_15                    all     0.0427
+P_20                    all     0.0380
+P_30                    all     0.0347
+P_100                   all     0.0240
+P_200                   all     0.0212
+P_500                   all     0.0146
+P_1000                  all     0.0109
+
+            case "lmjelinekmercer":
+                return new LMJelinekMercerSimilarity(0.7f);
+
+runid                   all     EnglishAnalyzer
+num_q                   all     25
+num_ret                 all     24999
+num_rel                 all     2132
+num_rel_ret             all     1139
+map                     all     0.2396
+gm_map                  all     0.1347
+Rprec                   all     0.2867
+bpref                   all     0.2610
+recip_rank              all     0.6578
+iprec_at_recall_0.00    all     0.7025
+iprec_at_recall_0.10    all     0.4977
+iprec_at_recall_0.20    all     0.4207
+iprec_at_recall_0.30    all     0.3160
+iprec_at_recall_0.40    all     0.2598
+iprec_at_recall_0.50    all     0.2147
+iprec_at_recall_0.60    all     0.1803
+iprec_at_recall_0.70    all     0.1340
+iprec_at_recall_0.80    all     0.0889
+iprec_at_recall_0.90    all     0.0532
+iprec_at_recall_1.00    all     0.0148
+P_5                     all     0.5360
+P_10                    all     0.4720
+P_15                    all     0.4267
+P_20                    all     0.3880
+P_30                    all     0.3373
+P_100                   all     0.2136
+P_200                   all     0.1440
+P_500                   all     0.0788
+
+
+            case "lmdirichlet":
+
+ics.txt
+runid                   all     EnglishAnalyzer
+num_q                   all     25
+num_ret                 all     25000
+num_rel                 all     2132
+num_rel_ret             all     1092
+map                     all     0.2176
+gm_map                  all     0.1066
+Rprec                   all     0.2725
+bpref                   all     0.2417
+recip_rank              all     0.6664
+iprec_at_recall_0.00    all     0.6934
+iprec_at_recall_0.10    all     0.4698
+iprec_at_recall_0.20    all     0.3753
+iprec_at_recall_0.30    all     0.2937
+iprec_at_recall_0.40    all     0.2362
+iprec_at_recall_0.50    all     0.1949
+iprec_at_recall_0.60    all     0.1580
+iprec_at_recall_0.70    all     0.1114
+iprec_at_recall_0.80    all     0.0719
+iprec_at_recall_0.90    all     0.0459
+iprec_at_recall_1.00    all     0.0107
+P_5                     all     0.4880
+P_10                    all     0.4360
+P_15                    all     0.4027
+P_20                    all     0.3860
+P_30                    all     0.3333
+P_100                   all     0.1864
+P_200                   all     0.1268
+P_500                   all     0.0710
+P_1000                  all     0.0437
+
