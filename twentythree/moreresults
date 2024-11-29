@@ -1,0 +1,140 @@
+ENGLISH ANALYZER
+            case "classic":
+                return new ClassicSimilarity();
+
+
+
+runid                   all     EnglishAnalyzer
+num_q                   all     25
+num_ret                 all     25000
+num_rel                 all     2132
+num_rel_ret             all     1364
+map                     all     0.2254
+gm_map                  all     0.1644
+Rprec                   all     0.2898
+bpref                   all     0.2486
+recip_rank              all     0.6574
+iprec_at_recall_0.00    all     0.7181
+iprec_at_recall_0.10    all     0.5349
+iprec_at_recall_0.20    all     0.4230
+iprec_at_recall_0.30    all     0.3430
+iprec_at_recall_0.40    all     0.2472
+iprec_at_recall_0.50    all     0.1730
+iprec_at_recall_0.60    all     0.1263
+iprec_at_recall_0.70    all     0.0995
+iprec_at_recall_0.80    all     0.0774
+iprec_at_recall_0.90    all     0.0418
+iprec_at_recall_1.00    all     0.0052
+P_5                     all     0.4800
+P_10                    all     0.4480
+P_15                    all     0.4347
+P_20                    all     0.4160
+P_30                    all     0.3800
+P_100                   all     0.2360
+P_200                   all     0.1628
+P_500                   all     0.0920
+P_1000                  all     0.0546
+
+
+
+
+
+            case "boolean":
+                return new BooleanSimilarity();
+num_q                   all     25
+num_ret                 all     25000
+num_rel                 all     2132
+num_rel_ret             all     310
+map                     all     0.0219
+gm_map                  all     0.0035
+Rprec                   all     0.0433
+bpref                   all     0.0397
+recip_rank              all     0.2510
+iprec_at_recall_0.00    all     0.2731
+iprec_at_recall_0.10    all     0.0650
+iprec_at_recall_0.20    all     0.0447
+iprec_at_recall_0.30    all     0.0217
+iprec_at_recall_0.40    all     0.0155
+iprec_at_recall_0.50    all     0.0119
+iprec_at_recall_0.60    all     0.0080
+iprec_at_recall_0.70    all     0.0035
+iprec_at_recall_0.80    all     0.0012
+iprec_at_recall_0.90    all     0.0000
+iprec_at_recall_1.00    all     0.0000
+P_5                     all     0.1120
+P_10                    all     0.0840
+P_15                    all     0.0640
+P_20                    all     0.0580
+P_30                    all     0.0453
+P_100                   all     0.0320
+P_200                   all     0.0220
+P_500                   all     0.0156
+P_1000                  all     0.0124
+
+            case "lmjelinekmercer":
+                return new LMJelinekMercerSimilarity(0.7f);
+l /home/azureuser/lucene-search-engine/twentythree/qrels.assignment2.part1 /home/azureuser/lucene-search-engine/twentythree/top1000_results_topics.txt
+runid                   all     EnglishAnalyzer
+num_q                   all     25
+num_ret                 all     25000
+num_rel                 all     2132
+num_rel_ret             all     1623
+map                     all     0.3501
+gm_map                  all     0.2892
+Rprec                   all     0.3841
+bpref                   all     0.3419
+recip_rank              all     0.8385
+iprec_at_recall_0.00    all     0.8870
+iprec_at_recall_0.10    all     0.6813
+iprec_at_recall_0.20    all     0.5876
+iprec_at_recall_0.30    all     0.4809
+iprec_at_recall_0.40    all     0.4049
+iprec_at_recall_0.50    all     0.3407
+iprec_at_recall_0.60    all     0.2724
+iprec_at_recall_0.70    all     0.2123
+iprec_at_recall_0.80    all     0.1440
+iprec_at_recall_0.90    all     0.0844
+iprec_at_recall_1.00    all     0.0148
+P_5                     all     0.6640
+P_10                    all     0.5920
+P_15                    all     0.5573
+P_20                    all     0.5220
+P_30                    all     0.4800
+P_100                   all     0.3076
+P_200                   all     0.2106
+P_500                   all     0.1131
+P_1000                  all     0.0649
+            case "lmdirichlet":
+                return new LMDirichletSimilarity();
+            default:
+azureuser@akudeg:~/lucene-search-engine/twentythree/trec_eval$ ./trec_eval /home/azureuser/lucene-search-engine/twentythree/qrels.assignment2.part1 /home/azureuser/lucene-search-engine/twentythree/top1000_results_topics.txt
+runid                   all     EnglishAnalyzer
+num_q                   all     25
+num_ret                 all     25000
+num_rel                 all     2132
+num_rel_ret             all     1412
+map                     all     0.2826
+gm_map                  all     0.1918
+Rprec                   all     0.3158
+bpref                   all     0.2819
+recip_rank              all     0.7689
+iprec_at_recall_0.00    all     0.7889
+iprec_at_recall_0.10    all     0.5730
+iprec_at_recall_0.20    all     0.4641
+iprec_at_recall_0.30    all     0.3530
+iprec_at_recall_0.40    all     0.3131
+iprec_at_recall_0.50    all     0.2650
+iprec_at_recall_0.60    all     0.2297
+iprec_at_recall_0.70    all     0.1963
+iprec_at_recall_0.80    all     0.1275
+iprec_at_recall_0.90    all     0.0764
+iprec_at_recall_1.00    all     0.0136
+P_5                     all     0.5200
+P_10                    all     0.4800
+P_15                    all     0.4453
+P_20                    all     0.4220
+P_30                    all     0.3827
+P_100                   all     0.2420
+P_200                   all     0.1708
+P_500                   all     0.0962
+P_1000                  all     0.0565
