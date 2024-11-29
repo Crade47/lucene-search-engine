@@ -625,3 +625,167 @@ P_200                   all     0.1268
 P_500                   all     0.0710
 P_1000                  all     0.0437
 
+Simple ANALYZER:
+runid                   all     EnglishAnalyzer
+num_q                   all     25
+num_ret                 all     24999
+num_rel                 all     2132
+num_rel_ret             all     1324
+map                     all     0.2872
+gm_map                  all     0.2065
+Rprec                   all     0.3240
+bpref                   all     0.2901
+recip_rank              all     0.8521
+iprec_at_recall_0.00    all     0.8666
+iprec_at_recall_0.10    all     0.6239
+iprec_at_recall_0.20    all     0.4825
+iprec_at_recall_0.30    all     0.3899
+iprec_at_recall_0.40    all     0.3233
+iprec_at_recall_0.50    all     0.2507
+iprec_at_recall_0.60    all     0.1927
+iprec_at_recall_0.70    all     0.1402
+iprec_at_recall_0.80    all     0.1043
+iprec_at_recall_0.90    all     0.0560
+iprec_at_recall_1.00    all     0.0145
+P_5                     all     0.6400
+P_10                    all     0.5680
+P_15                    all     0.5200
+P_20                    all     0.4780
+P_30                    all     0.4147
+P_100                   all     0.2416
+P_200                   all     0.1608
+P_500                   all     0.0893
+P_1000                  all     0.0530
+
+CLASSIC:
+
+runid                   all     EnglishAnalyzer
+num_q                   all     25
+num_ret                 all     24999
+num_rel                 all     2132
+num_rel_ret             all     1191
+map                     all     0.2070
+gm_map                  all     0.1535
+Rprec                   all     0.2747
+bpref                   all     0.2416
+recip_rank              all     0.5413
+iprec_at_recall_0.00    all     0.6418
+iprec_at_recall_0.10    all     0.5355
+iprec_at_recall_0.20    all     0.3852
+iprec_at_recall_0.30    all     0.3109
+iprec_at_recall_0.40    all     0.2299
+iprec_at_recall_0.50    all     0.1694
+iprec_at_recall_0.60    all     0.1178
+iprec_at_recall_0.70    all     0.0795
+iprec_at_recall_0.80    all     0.0510
+iprec_at_recall_0.90    all     0.0338
+iprec_at_recall_1.00    all     0.0010
+P_5                     all     0.5280
+P_10                    all     0.4760
+P_15                    all     0.4133
+P_20                    all     0.3900
+P_30                    all     0.3520
+P_100                   all     0.2108
+P_200                   all     0.1448
+P_500                   all     0.0806
+P_1000                  all     0.0476
+
+BOOLEAN:
+ics.txt
+runid                   all     EnglishAnalyzer
+num_q                   all     25
+num_ret                 all     25000
+num_rel                 all     2132
+num_rel_ret             all     355
+map                     all     0.0276
+gm_map                  all     0.0064
+Rprec                   all     0.0574
+bpref                   all     0.0494
+recip_rank              all     0.2159
+iprec_at_recall_0.00    all     0.2531
+iprec_at_recall_0.10    all     0.0858
+iprec_at_recall_0.20    all     0.0633
+iprec_at_recall_0.30    all     0.0424
+iprec_at_recall_0.40    all     0.0247
+iprec_at_recall_0.50    all     0.0199
+iprec_at_recall_0.60    all     0.0106
+iprec_at_recall_0.70    all     0.0023
+iprec_at_recall_0.80    all     0.0000
+iprec_at_recall_0.90    all     0.0000
+iprec_at_recall_1.00    all     0.0000
+P_5                     all     0.1040
+P_10                    all     0.0880
+P_15                    all     0.0693
+P_20                    all     0.0600
+P_30                    all     0.0533
+P_100                   all     0.0352
+P_200                   all     0.0276
+P_500                   all     0.0194
+P_1000                  all     0.0142
+
+
+lmjelinekmercer:
+runid                   all     EnglishAnalyzer
+num_q                   all     25
+num_ret                 all     24999
+num_rel                 all     2132
+num_rel_ret             all     1375
+map                     all     0.2829
+gm_map                  all     0.2071
+Rprec                   all     0.3154
+bpref                   all     0.2864
+recip_rank              all     0.8002
+iprec_at_recall_0.00    all     0.8231
+iprec_at_recall_0.10    all     0.6050
+iprec_at_recall_0.20    all     0.5152
+iprec_at_recall_0.30    all     0.3941
+iprec_at_recall_0.40    all     0.3201
+iprec_at_recall_0.50    all     0.2454
+iprec_at_recall_0.60    all     0.1861
+iprec_at_recall_0.70    all     0.1422
+iprec_at_recall_0.80    all     0.0977
+iprec_at_recall_0.90    all     0.0589
+iprec_at_recall_1.00    all     0.0197
+P_5                     all     0.6560
+P_10                    all     0.5720
+P_15                    all     0.5200
+P_20                    all     0.4740
+P_30                    all     0.4200
+P_100                   all     0.2484
+P_200                   all     0.1628
+P_500                   all     0.0938
+P_1000                  all     0.0550
+
+lmdirichlet:
+
+
+runid                   all     EnglishAnalyzer
+num_q                   all     25
+num_ret                 all     25000
+num_rel                 all     2132
+num_rel_ret             all     1146
+map                     all     0.2454
+gm_map                  all     0.1592
+Rprec                   all     0.2966
+bpref                   all     0.2602
+recip_rank              all     0.8075
+iprec_at_recall_0.00    all     0.8333
+iprec_at_recall_0.10    all     0.5571
+iprec_at_recall_0.20    all     0.4139
+iprec_at_recall_0.30    all     0.3198
+iprec_at_recall_0.40    all     0.2644
+iprec_at_recall_0.50    all     0.2049
+iprec_at_recall_0.60    all     0.1735
+iprec_at_recall_0.70    all     0.1362
+iprec_at_recall_0.80    all     0.0848
+iprec_at_recall_0.90    all     0.0546
+iprec_at_recall_1.00    all     0.0149
+P_5                     all     0.5120
+P_10                    all     0.4800
+P_15                    all     0.4427
+P_20                    all     0.4220
+P_30                    all     0.3693
+P_100                   all     0.2192
+P_200                   all     0.1438
+P_500                   all     0.0766
+P_1000                  all     0.0458
