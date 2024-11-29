@@ -1,6 +1,5 @@
 ENGLISH ANALYZER
             case "classic":
-                return new ClassicSimilarity();
 
 
 
@@ -40,7 +39,6 @@ P_1000                  all     0.0546
 
 
             case "boolean":
-                return new BooleanSimilarity();
 num_q                   all     25
 num_ret                 all     25000
 num_rel                 all     2132
@@ -72,8 +70,7 @@ P_500                   all     0.0156
 P_1000                  all     0.0124
 
             case "lmjelinekmercer":
-                return new LMJelinekMercerSimilarity(0.7f);
-l /home/azureuser/lucene-search-engine/twentythree/qrels.assignment2.part1 /home/azureuser/lucene-search-engine/twentythree/top1000_results_topics.txt
+
 runid                   all     EnglishAnalyzer
 num_q                   all     25
 num_ret                 all     25000
@@ -104,10 +101,10 @@ P_100                   all     0.3076
 P_200                   all     0.2106
 P_500                   all     0.1131
 P_1000                  all     0.0649
+
+
             case "lmdirichlet":
-                return new LMDirichletSimilarity();
-            default:
-azureuser@akudeg:~/lucene-search-engine/twentythree/trec_eval$ ./trec_eval /home/azureuser/lucene-search-engine/twentythree/qrels.assignment2.part1 /home/azureuser/lucene-search-engine/twentythree/top1000_results_topics.txt
+            
 runid                   all     EnglishAnalyzer
 num_q                   all     25
 num_ret                 all     25000
@@ -140,10 +137,9 @@ P_500                   all     0.0962
 P_1000                  all     0.0565
 
 STANDARD ANALYZER
-    public static Similarity getSimilarity(String choice) {
-        switch (choice.toLowerCase()) {
+
             case "bm25":
-                return new BM25Similarity();
+
 
 ics.txt
 runid                   all     EnglishAnalyzer
@@ -183,9 +179,7 @@ P_1000                  all     0.0521
 
 
             case "classic":
-                return new ClassicSimilarity();
-
-al /home/azureuser/lucene-search-engine/twentythree/qrels.assignment2.part1 /home/azureuser/lucene-search-engine/twentythree/top1000_results_topics.txt
+              
 runid                   all     EnglishAnalyzer
 num_q                   all     25
 num_ret                 all     24999
@@ -218,7 +212,6 @@ P_500                   all     0.0808
 P_1000                  all     0.0484
 
             case "boolean":
-                return new BooleanSimilarity();
 
 runid                   all     EnglishAnalyzer
 num_q                   all     25
@@ -252,9 +245,7 @@ P_500                   all     0.0191
 P_1000                  all     0.0139
 
             case "lmjelinekmercer":
-                return new LMJelinekMercerSimilarity(0.7f);
-
-al /home/azureuser/lucene-search-engine/twentythree/qrels.assignment2.part1 /home/azureuser/lucene-search-engine/twentythree/top1000_results_topics.txt
+                
 runid                   all     EnglishAnalyzer
 num_q                   all     25
 num_ret                 all     24999
@@ -287,9 +278,7 @@ P_500                   all     0.0944
 P_1000                  all     0.0561
 
             case "lmdirichlet":
-                return new LMDirichletSimilarity();
-
-azureuser@akudeg:~/lucene-search-engine/twentythree/trec_eval$ ./trec_eval /home/azureuser/lucene-search-engine/twentythree/qrels.assignment2.part1 /home/azureuser/lucene-search-engine/twentythree/top1000_results_topics.txt
+               
 runid                   all     EnglishAnalyzer
 num_q                   all     25
 num_ret                 all     25000
@@ -321,9 +310,6 @@ P_200                   all     0.1432
 P_500                   all     0.0760
 P_1000                  all     0.0457
 
-            default:
-                throw new IllegalArgumentException("Unknown similarity choice: " + choice);
-        }
 
 MySynonymAnalyzer -BM25:
 runid                   all     EnglishAnalyzer
@@ -456,7 +442,6 @@ P_1000                  all     0.0642
 
 WHITESPACE
 
-        switch (choice.toLowerCase()) {
             case "bm25":
 runid                   all     EnglishAnalyzer
 num_q                   all     25
@@ -524,6 +509,8 @@ P_100                   all     0.1716
 P_200                   all     0.1122
 P_500                   all     0.0620
 P_1000                  all     0.0371
+
+
             case "boolean":
 
 runid                   all     EnglishAnalyzer
@@ -557,8 +544,7 @@ P_200                   all     0.0212
 P_500                   all     0.0146
 P_1000                  all     0.0109
 
-            case "lmjelinekmercer":
-                return new LMJelinekMercerSimilarity(0.7f);
+            case "lmjelinekmercer": LMJelinekMercerSimilarity(0.7f);
 
 runid                   all     EnglishAnalyzer
 num_q                   all     25
