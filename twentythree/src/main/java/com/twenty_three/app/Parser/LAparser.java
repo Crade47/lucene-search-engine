@@ -52,12 +52,9 @@ public class LAparser {
                 date = extractNestedText(dateElement);
             }
 
-            // Extract <FIG> and <TXT5>
-            String fig = doc.selectFirst("FIG") != null ? doc.selectFirst("FIG").text() : null;
-            String txt5 = doc.selectFirst("TXT5") != null ? doc.selectFirst("TXT5").text() : null;
 
             // Add the parsed data to the list
-            parsedDocuments.add(new DocumentData(docNo, title, text, date, null, fig, txt5));
+            parsedDocuments.add(new DocumentData(docNo, title, text, date, null));
         }
 
         return parsedDocuments;

@@ -24,90 +24,34 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class Search {
 
     public static void main(String[] args) {
         try {
-            // Get the index path and topics file path from command-line arguments or default values
+            // Main logic for setting up search
             String indexPath = args.length > 0 ? args[0] : "index";
             String topicsFilePath = args.length > 1 ? args[1] : "/home/azureuser/lucene-search-engine/twentythree/topics";
 
-            // Open the Lucene index
             IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
             IndexSearcher searcher = new IndexSearcher(reader);
-
-            // Set BM25 as the similarity model
             searcher.setSimilarity(new BM25Similarity());
 
-            // Use the EnglishAnalyzer for querying
             EnglishAnalyzer analyzer = new EnglishAnalyzer();
 
-            // Dynamic field weighting (ensure field names match the index)
             Map<String, Float> boosts = new HashMap<>();
-            boosts.put("title", 0.1f);
-            boosts.put("content", 0.9f);
+            boosts.put("title", 0.08f);
+            boosts.put("content", 0.98f);
 
             MultiFieldQueryParser parser = new MultiFieldQueryParser(new String[]{"title", "content"}, analyzer, boosts);
 
-            // Output file for top 1000 results in TREC format
             try (BufferedWriter writer = new BufferedWriter(new FileWriter("top1000_results_topics.txt"))) {
                 try (BufferedReader br = new BufferedReader(new FileReader(topicsFilePath))) {
-                    String line;
-                    String topicId = null;
-                    StringBuilder queryBuilder = new StringBuilder();
-                    boolean insideDesc = false;
-
-                    while ((line = br.readLine()) != null) {
-                        line = line.trim();
-
-                        if (line.startsWith("<num>")) {
-                            topicId = line.replace("<num>", "").replace("Number:", "").trim();
-                        } else if (line.startsWith("<title>")) {
-                            queryBuilder.append(line.replace("<title>", "").trim()).append(" ");
-                        } else if (line.startsWith("<desc>")) {
-                            insideDesc = true;
-                            queryBuilder.append(line.replace("<desc>", "").replace("Description:", "").trim()).append(" ");
-                        } else if (line.startsWith("</top>")) {
-                            insideDesc = false;
-
-                            // Validate topic ID and query before proceeding
-                            if (topicId != null && queryBuilder.length() > 0) {
-                                String queryText = queryBuilder.toString().trim();
-                                queryBuilder.setLength(0); // Reset query builder for next topic
-
-                                System.out.printf("Querying Topic %s: %s%n", topicId, queryText);
-
-                                // Base query
-                                Query baseQuery = parser.parse(QueryParserBase.escape(queryText));
-                                TopDocs baseResults = searcher.search(baseQuery, 1000);
-
-                                // Query Expansion
-                                Query expandedQuery = expandQuery(searcher, analyzer, baseQuery, reader);
-
-                                // Search with expanded query
-                                TopDocs expandedResults = searcher.search(expandedQuery, 1000);
-
-                                // Write results in TREC format
-                                for (int i = 0; i < expandedResults.scoreDocs.length; i++) {
-                                    ScoreDoc scoreDoc = expandedResults.scoreDocs[i];
-                                    Document doc = searcher.doc(scoreDoc.doc);
-                                    String docNo = doc.get("docno");
-
-                                    // Validate docNo before writing
-                                    if (docNo != null && !docNo.isEmpty()) {
-                                        float score = scoreDoc.score;
-                                        writer.write(String.format("%s Q0 %s %d %.4f Expanded\n", topicId, docNo, i + 1, score));
-                                    }
-                                }
-                            }
-                        } else if (insideDesc) {
-                            queryBuilder.append(line).append(" ");
-                        }
-                    }
+                    processTopics(br, parser, searcher, analyzer, reader, writer);
                 }
-
-                System.out.println("\nSearch complete. Results saved to 'top1000_results_topics.txt'.");
             }
+
+            System.out.println("\nSearch complete. Results saved to 'top1000_results_topics.txt'.");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -115,36 +59,101 @@ public class Search {
     }
 
     /**
-     * Expands a query using `MoreLikeThisQuery` for relevance feedback.
-     *
-     * @param searcher The IndexSearcher instance
-     * @param analyzer The Analyzer to use
-     * @param baseQuery The original query
-     * @param reader The IndexReader instance
-     * @return The expanded query
-     * @throws IOException If an error occurs during query expansion
+     * Processes topics from a BufferedReader and performs search.
      */
-    private static Query expandQuery(IndexSearcher searcher, Analyzer analyzer, Query baseQuery, IndexReader reader) throws IOException {
-        BooleanQuery.Builder expandedQueryBuilder = new BooleanQuery.Builder();
-        expandedQueryBuilder.add(baseQuery, BooleanClause.Occur.SHOULD); // Original query
+    private static void processTopics(BufferedReader br, MultiFieldQueryParser parser, 
+                                       IndexSearcher searcher, Analyzer analyzer, 
+                                       IndexReader reader, BufferedWriter writer) throws Exception {
+        String line;
+        String topicId = null;
+        StringBuilder queryBuilder = new StringBuilder();
+        boolean insideDesc = false;
 
-        // Retrieve top 4 documents for query expansion
-        TopDocs topDocs = searcher.search(baseQuery, 4);
+        while ((line = br.readLine()) != null) {
+                line = line.trim();
 
-        for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-            Document doc = reader.document(scoreDoc.doc);
-            String content = doc.get("content");
+                if (line.startsWith("<num>")) {
+                        topicId = line.replace("<num>", "").replace("Number:", "").trim();
+                } else if (line.startsWith("<title>")) {
+                        queryBuilder.append(line.replace("<title>", "").trim()).append(" ");
+                } else if (line.startsWith("<desc>")) {
+                        insideDesc = true;
+                        queryBuilder.append(line.replace("<desc>", "").replace("Description:", "").trim()).append(" ");
+                } else if (line.startsWith("<narr>")) {
+                        insideDesc = true; // Treat narrative as part of the extended description
+                        queryBuilder.append(line.replace("<narr>", "").replace("Narrative:", "").trim()).append(" ");
+                } else if (line.startsWith("</top>")) {
+                        insideDesc = false;
 
-            // Validate content before using it
-            if (content != null && !content.trim().isEmpty()) {
-                MoreLikeThisQuery mltQuery = new MoreLikeThisQuery(content, new String[]{"content"}, analyzer, "content");
-                Query rewrittenQuery = mltQuery.rewrite(reader);
+                        if (topicId != null && queryBuilder.length() > 0) {
+                                String queryText = queryBuilder.toString().trim();
+                                queryBuilder.setLength(0);
 
-                // Add the rewritten query to the expanded query
-                expandedQueryBuilder.add(rewrittenQuery, BooleanClause.Occur.SHOULD);
+                                System.out.printf("Querying Topic %s: %s%n", topicId, queryText);
+
+                                Query origQ = parser.parse(QueryParserBase.escape(queryText));
+                                TopDocs baseResults = searcher.search(origQ, 1000);
+
+                                Query optQue = optimiseQuery(searcher, analyzer, origQ, reader);
+                                TopDocs optQueResults = searcher.search(optQue, 1000);
+
+                                for (int i = 0; i < optQueResults.scoreDocs.length; i++) {
+                                        ScoreDoc scoreDoc = optQueResults.scoreDocs[i];
+                                        Document doc = searcher.doc(scoreDoc.doc);
+                                        String docNo = doc.get("docno");
+
+                                        if (docNo != null && !docNo.isEmpty()) {
+                                                float score = scoreDoc.score;
+                                                writer.write(String.format("%s Q0 %s %d %.4f EnglishAnalyzer\n", topicId, docNo, i + 1, score));
+                                        }
+                                }
+                        }
+                } else if (insideDesc) {
+                        queryBuilder.append(line).append(" ");
+                }
+        }
+    }
+
+    /**
+     * Optimises a query using `MoreLikeThisQuery` for relevance feedback.
+     */
+    private static Query optimiseQuery(IndexSearcher searcher, Analyzer analyzer, Query inputQuery, IndexReader reader) throws IOException {
+        BooleanQuery.Builder optQue = new BooleanQuery.Builder();
+        optQue.add(inputQuery, BooleanClause.Occur.SHOULD);
+
+        int maxDocs = 3;
+        TopDocs relevantDocs = searcher.search(inputQuery, maxDocs);
+
+        for (ScoreDoc resultDoc : relevantDocs.scoreDocs) {
+            String docContent = reader.document(resultDoc.doc).get("content");
+            if (docContent != null && !docContent.trim().isEmpty()) {
+                MoreLikeThisQuery moreQuery = new MoreLikeThisQuery(
+                    docContent,
+                    new String[]{"content"},
+                    analyzer,
+                    "content"
+                );
+                Query modifiedQuery = moreQuery.rewrite(reader);
+                optQue.add(modifiedQuery, BooleanClause.Occur.SHOULD);
             }
         }
 
-        return expandedQueryBuilder.build();
+        return optQue.build();
+    }
+
+    /**
+     * Writes search results in TREC format.
+     */
+    private static void writeResults(BufferedWriter writer, String topicId, TopDocs results, IndexSearcher searcher) throws Exception {
+        for (int i = 0; i < results.scoreDocs.length; i++) {
+            ScoreDoc scoreDoc = results.scoreDocs[i];
+            Document doc = searcher.doc(scoreDoc.doc);
+            String docNo = doc.get("docno");
+
+            if (docNo != null && !docNo.isEmpty()) {
+                float score = scoreDoc.score;
+                writer.write(String.format("%s Q0 %s %d %.4f EnglishAnalyzer\n", topicId, docNo, i + 1, score));
+            }
+        }
     }
 }

@@ -25,7 +25,7 @@ public class FR94parser {
             String text = doc.selectFirst("TEXT") != null ? extractAndCleanText(doc.selectFirst("TEXT")) : null;
             String date = doc.selectFirst("DATE") != null ? doc.selectFirst("DATE").text() : null;
 
-            parsedDocuments.add(new DocumentData(docNo, title, text, date, null, null, null));
+            parsedDocuments.add(new DocumentData(docNo, title, text, date));
         }
         return parsedDocuments;
     }

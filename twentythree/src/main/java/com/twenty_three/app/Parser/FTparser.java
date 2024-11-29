@@ -23,7 +23,7 @@ public class FTparser {
             String date = doc.selectFirst("DATE") != null ? doc.selectFirst("DATE").text() : null;
             String author = doc.selectFirst("BYLINE") != null ? doc.selectFirst("BYLINE").text() : null;
 
-            parsedDocuments.add(new DocumentData(docNo, title, text, date, author, null, null));
+            parsedDocuments.add(new DocumentData(docNo, title, text, date, author));
         }
         return parsedDocuments;
     }

@@ -151,15 +151,7 @@ public class Index {
         if (docData.getAuthor() != null) {
             document.add(new TextField("author", docData.getAuthor(), Field.Store.YES));
         }
-
-        // Add fig and txt5 (specific to FBIS documents)
-        if (docData.getFig() != null) {
-            document.add(new TextField("fig", docData.getFig(), Field.Store.YES));
-        }
-        if (docData.getTxt5() != null) {
-            document.add(new TextField("txt5", docData.getTxt5(), Field.Store.YES));
-        }
-
+        
         return document;
     }
 

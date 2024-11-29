@@ -13,13 +13,6 @@ import com.twenty_three.app.parsers.DocumentData;
 
 public class FBparser {
 
-    // Predefined tags to process or clean
-    private static final List<String> TAGS_TO_REMOVE = Arrays.asList(
-        "TI", "HT", "PHRASE", "DATE1", "ABS", "FIG",
-        "H1", "H2", "H3", "H4", "H5", "H6", "H7", "H8",
-        "TR", "TXT5", "HEADER", "TEXT", "AU"
-    );
-
     /**
      * Parses FBIS documents and extracts relevant fields.
      *
@@ -38,30 +31,19 @@ public class FBparser {
         for (Element docElement : parsedXml.select("DOC")) {
             try {
                 // Extract document number
-                String documentNumber = extractTagText(docElement, "DOCNO");
+                String docNo = extractTagText(docElement, "DOCNO");
 
-                // Extract and clean text content
-                String documentText = extractTagText(docElement, "TEXT");
-                if (documentText != null) {
-                    documentText = removeSpecificTags(documentText);
-                }
+                // Extract and clean text content using a regular expression to remove tags
+                String text = extractTextContent(docElement, "TEXT");
 
                 // Extract date
-                String documentDate = extractTagText(docElement, "DATE1");
+                String date = extractTagText(docElement, "DATE1");
 
                 // Construct a combined title from hierarchical tags
-                StringBuilder titleBuilder = new StringBuilder();
-                for (int level = 3; level <= 8; level++) {
-                    String tagName = "H" + level;
-                    Element tagElement = docElement.selectFirst(tagName);
-                    if (tagElement != null) {
-                        titleBuilder.append(tagElement.text()).append(" ");
-                    }
-                }
-                String documentTitle = titleBuilder.toString().trim();
+                String title = constructTitle(docElement);
 
                 // Add the parsed document to the list
-                parsedDocuments.add(new DocumentData(documentNumber, documentTitle, documentText, documentDate));
+                parsedDocuments.add(new DocumentData(docNo, title, text, date));
             } catch (Exception e) {
                 System.err.println("Error parsing document: " + e.getMessage());
             }
@@ -71,7 +53,39 @@ public class FBparser {
     }
 
     /**
-     * Extracts text content from a specific tag in the document.
+     * Extracts plain text content from a specific tag in the document.
+     *
+     * @param parent The parent element to search within.
+     * @param tagName The tag name to extract.
+     * @return Text content of the tag, or null if not found.
+     */
+    private String extractTextContent(Element parent, String tagName) {
+        Element tagElement = parent.selectFirst(tagName);
+        if (tagElement == null) return null;
+
+        // Remove tags using a regular expression
+        return cleanTags(tagElement.text());
+    }
+
+    /**
+     * Removes unwanted tags using a regular expression.
+     *
+     * @param content The original text content to clean.
+     * @return Cleaned text without the specified tags.
+     */
+    private String cleanTags(String content) {
+        // Predefined tags to remove
+        String tagsToRemove = "(HT|HEADER|PHRASE|DATE1|ABS|FIG|TI|H1|H2|H3|H4|H5|H6|H7|H8|TR|TXT5|TEXT|AU)";
+        
+        // Regex to match the specified tags
+        String regex = String.format("<\\/?(%s)>", tagsToRemove);
+
+        // Replace tags with an empty string
+        return content.replaceAll(regex, "").replaceAll("\\[|\\]", "").replaceAll("\n", " ").trim();
+    }
+
+    /**
+     * Extracts text content from a specific tag or returns null if the tag is missing.
      *
      * @param parent The parent element to search within.
      * @param tagName The tag name to extract.
@@ -83,21 +97,20 @@ public class FBparser {
     }
 
     /**
-     * Cleans the text content by removing specific predefined tags.
+     * Constructs a title by combining text from hierarchical tags (H3 to H8).
      *
-     * @param content The original text content to clean.
-     * @return Cleaned text without the specified tags.
+     * @param docElement The parent document element.
+     * @return The combined title string.
      */
-    private String removeSpecificTags(String content) {
-        // Replace newlines and square brackets
-        content = content.replaceAll("\\[|\\]", "").replaceAll("\n", " ").trim();
-
-        // Remove each tag in the predefined list
-        for (String tag : TAGS_TO_REMOVE) {
-            content = content.replaceAll("<" + tag + ">", "")
-                             .replaceAll("</" + tag + ">", "");
+    private String constructTitle(Element docElement) {
+        List<String> titleParts = new ArrayList<>();
+        for (int level = 3; level <= 8; level++) {
+            String tagName = "H" + level;
+            Element tagElement = docElement.selectFirst(tagName);
+            if (tagElement != null) {
+                titleParts.add(tagElement.text());
+            }
         }
-
-        return content;
+        return String.join(" ", titleParts).trim();
     }
 }
