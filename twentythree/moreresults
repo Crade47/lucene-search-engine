@@ -325,5 +325,35 @@ P_1000                  all     0.0457
                 throw new IllegalArgumentException("Unknown similarity choice: " + choice);
         }
 
-
+MySynonymAnalyzer -BM25:
+runid                   all     EnglishAnalyzer
+num_q                   all     25
+num_ret                 all     25000
+num_rel                 all     2132
+num_rel_ret             all     1532
+map                     all     0.3329
+gm_map                  all     0.2581
+Rprec                   all     0.3655
+bpref                   all     0.3220
+recip_rank              all     0.8937
+iprec_at_recall_0.00    all     0.9100
+iprec_at_recall_0.10    all     0.6823
+iprec_at_recall_0.20    all     0.5378
+iprec_at_recall_0.30    all     0.4710
+iprec_at_recall_0.40    all     0.3953
+iprec_at_recall_0.50    all     0.3171
+iprec_at_recall_0.60    all     0.2358
+iprec_at_recall_0.70    all     0.1935
+iprec_at_recall_0.80    all     0.1419
+iprec_at_recall_0.90    all     0.0704
+iprec_at_recall_1.00    all     0.0103
+P_5                     all     0.6480
+P_10                    all     0.5920
+P_15                    all     0.5413
+P_20                    all     0.4980
+P_30                    all     0.4600
+P_100                   all     0.2932
+P_200                   all     0.1974
+P_500                   all     0.1043
+P_1000                  all     0.0613
 
