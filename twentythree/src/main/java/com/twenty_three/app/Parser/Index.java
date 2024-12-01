@@ -1,6 +1,7 @@
-package com.twenty_three.app.parsers;
+package com.twenty_three.app.Parser;
 
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -11,12 +12,16 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.search.similarities.Similarity;
-import com.twenty_three.app.parsers.DocumentData;
-import com.twenty_three.app.parsers.FTparser;
-import com.twenty_three.app.parsers.FR94parser;
-import com.twenty_three.app.parsers.LAparser;
-import com.twenty_three.app.parsers.FBparser;
+import com.twenty_three.app.Parser.DocumentData;
+import com.twenty_three.app.Parser.FTparser;
+import com.twenty_three.app.Parser.FR94parser;
+import com.twenty_three.app.Parser.LAparser;
+import com.twenty_three.app.Parser.FBparser;
 import org.apache.lucene.search.similarities.BM25Similarity;
+import org.apache.lucene.search.similarities.BooleanSimilarity;
+import org.apache.lucene.search.similarities.ClassicSimilarity;
+import org.apache.lucene.search.similarities.LMDirichletSimilarity;
+import org.apache.lucene.search.similarities.LMJelinekMercerSimilarity;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import com.twenty_three.app.Parser.MySynonymAnalyzer;
 
 @FunctionalInterface
 interface ParserFunction {
@@ -32,7 +38,7 @@ interface ParserFunction {
 
 public class Index {
 
-    public static void main(String[] args) {
+    public static void index(){
         try {
             // Define the directory for storing the index
             Path indexPath = Paths.get("index");
@@ -40,8 +46,11 @@ public class Index {
 
             // Set up the Lucene analyzer and similarity
             EnglishAnalyzer analyzer = new EnglishAnalyzer();
+            //MySynonymAnalyzer analyzer = new MySynonymAnalyzer("/vol/bitbucket/ss8923/lucene-search-engine/twentythree/wn_s.pl");
+           // StandardAnalyzer analyzer = new StandardAnalyzer();
             BM25Similarity similarity = new BM25Similarity();
-
+            //BooleanSimilarity similarity = new BooleanSimilarity();
+            //LMJelinekMercerSimilarity similarity =new LMJelinekMercerSimilarity(0.7f);
             // Create the IndexWriter
             IndexWriterConfig config = configureIndexWriter(analyzer, similarity);
             try (IndexWriter writer = new IndexWriter(directory, config)) {
@@ -93,25 +102,25 @@ public class Index {
 
         // Parse LA Times: Files directly under "latimes"
         System.out.println("Parsing LA Times documents...");
-        String laTimesPath = "/home/azureuser/lucene-search-engine/twentythree/corpus/latimes";
+        String laTimesPath = "/vol/bitbucket/ss8923/lucene-search-engine/twentythree/corpus/latimes";
         parsedDocuments.addAll(parseFilesInDirectory(laTimesPath, laParser::parseLATimes));
         System.out.println("LA Times indexing complete!");
 
         // Parse Financial Times: Nested folders with files in "ft"
         System.out.println("Parsing Financial Times documents...");
-        String ftPath = "/home/azureuser/lucene-search-engine/twentythree/corpus/ft";
+        String ftPath = "/vol/bitbucket/ss8923/lucene-search-engine/twentythree/corpus/ft";
         parsedDocuments.addAll(parseNestedFilesInDirectory(ftPath, ftParser::parseFT));
         System.out.println("Financial Times indexing complete!");
 
         // Parse FR94: Nested folders with files in "fr94"
         System.out.println("Parsing FR94 documents...");
-        String fr94Path = "/home/azureuser/lucene-search-engine/twentythree/corpus/fr94";
+        String fr94Path = "/vol/bitbucket/ss8923/lucene-search-engine/twentythree/corpus/fr94";
         parsedDocuments.addAll(parseNestedFilesInDirectory(fr94Path, fr94Parser::parseFR94));
         System.out.println("FR94 indexing complete!");
 
         // Parse FBIS: Files directly under "fbis"
         System.out.println("Parsing FBIS documents...");
-        String fbisPath = "/home/azureuser/lucene-search-engine/twentythree/corpus/fbis";
+        String fbisPath = "/vol/bitbucket/ss8923/lucene-search-engine/twentythree/corpus/fbis";
         parsedDocuments.addAll(parseFilesInDirectory(fbisPath, fbParser::parseFBIS));
         System.out.println("FBIS indexing complete!");
 

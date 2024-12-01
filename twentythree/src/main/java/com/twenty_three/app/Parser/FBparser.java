@@ -1,4 +1,4 @@
-package com.twenty_three.app.parsers;
+package com.twenty_three.app.Parser;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import com.twenty_three.app.parsers.DocumentData;
+import com.twenty_three.app.Parser.DocumentData;
 
 public class FBparser {
 

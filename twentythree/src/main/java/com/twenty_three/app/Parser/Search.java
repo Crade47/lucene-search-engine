@@ -1,4 +1,4 @@
-package com.twenty_three.app.parsers;
+package com.twenty_three.app.Parser;
 
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
@@ -10,6 +10,9 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.QueryParserBase;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.similarities.BM25Similarity;
+import org.apache.lucene.search.similarities.BooleanSimilarity;
+import org.apache.lucene.search.similarities.ClassicSimilarity;
+import org.apache.lucene.search.similarities.LMJelinekMercerSimilarity;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.queries.mlt.MoreLikeThisQuery;
 
@@ -27,23 +30,23 @@ import java.util.Map;
 
 public class Search {
 
-    public static void main(String[] args) {
+    public static void search() {
         try {
             // Main logic for setting up search
-            String indexPath = args.length > 0 ? args[0] : "index";
-            String topicsFilePath = args.length > 1 ? args[1] : "/home/azureuser/lucene-search-engine/twentythree/topics";
+            String indexPath = "index";
+            String topicsFilePath ="topics";
 
             IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
             IndexSearcher searcher = new IndexSearcher(reader);
             searcher.setSimilarity(new BM25Similarity());
 
             EnglishAnalyzer analyzer = new EnglishAnalyzer();
-
+           // MySynonymAnalyzer analyzer = new MySynonymAnalyzer("/vol/bitbucket/ss8923/lucene-search-engine/twentythree/wn_s.pl");
             Map<String, Float> boosts = new HashMap<>();
             boosts.put("title", 0.08f);
             boosts.put("content", 0.98f);
 
-            MultiFieldQueryParser parser = new MultiFieldQueryParser(new String[]{"title", "content"}, analyzer, boosts);
+            MultiFieldQueryParser parser = new MultiFieldQueryParser(new String[]{"title", "content"}, analyzer, boosts);//
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter("top1000_results_topics.txt"))) {
                 try (BufferedReader br = new BufferedReader(new FileReader(topicsFilePath))) {
