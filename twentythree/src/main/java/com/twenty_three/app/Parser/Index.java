@@ -12,17 +12,8 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.search.similarities.Similarity;
-import com.twenty_three.app.Parser.DocumentData;
-import com.twenty_three.app.Parser.FTparser;
-import com.twenty_three.app.Parser.FR94parser;
-import com.twenty_three.app.Parser.LAparser;
-import com.twenty_three.app.Parser.FBparser;
 import org.apache.lucene.search.similarities.BM25Similarity;
-import org.apache.lucene.search.similarities.BooleanSimilarity;
-import org.apache.lucene.search.similarities.ClassicSimilarity;
-import org.apache.lucene.search.similarities.LMDirichletSimilarity;
-import org.apache.lucene.search.similarities.LMJelinekMercerSimilarity;
-import org.apache.lucene.analysis.en.EnglishAnalyzer;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -33,31 +24,31 @@ import com.twenty_three.app.Parser.MySynonymAnalyzer;
 
 @FunctionalInterface
 interface ParserFunction {
-    List<DocumentData> parse(String filePath) throws Exception;
+    List<ObjectData> parse(String filePath) throws Exception;
 }
 
 public class Index {
 
     public static void index(){
         try {
-            // Define the directory for storing the index
+            // directory for storing the index
             Path indexPath = Paths.get("index");
             Directory directory = FSDirectory.open(indexPath);
 
-            // Set up the Lucene analyzer and similarity
             EnglishAnalyzer analyzer = new EnglishAnalyzer();
-            //MySynonymAnalyzer analyzer = new MySynonymAnalyzer("/vol/bitbucket/ss8923/lucene-search-engine/twentythree/wn_s.pl");
+            //MySynonymAnalyzer analyzer = new MySynonymAnalyzer("/home/azureuser/lucene-search-engine/twentythree/wn_s.pl");
            // StandardAnalyzer analyzer = new StandardAnalyzer();
+
             BM25Similarity similarity = new BM25Similarity();
             //BooleanSimilarity similarity = new BooleanSimilarity();
             //LMJelinekMercerSimilarity similarity =new LMJelinekMercerSimilarity(0.7f);
-            // Create the IndexWriter
+
             IndexWriterConfig config = configureIndexWriter(analyzer, similarity);
             try (IndexWriter writer = new IndexWriter(directory, config)) {
-                // Parse and combine all datasets
-                List<DocumentData> parsedDocuments = parseAllCollections();
+                // to parse and combine all datasets
+                List<ObjectData> parsedDocuments = parseAllCollections();
 
-                // Index all parsed documents
+                // index all parsed documents
                 indexDocuments(writer, parsedDocuments);
 
                 System.out.println("Indexing completed successfully!");
@@ -71,13 +62,7 @@ public class Index {
         }
     }
 
-    /**
-     * Configures the IndexWriter with the specified analyzer and similarity.
-     *
-     * @param analyzer Analyzer for processing text
-     * @param similarity Similarity metric for scoring
-     * @return Configured IndexWriterConfig
-     */
+
     private static IndexWriterConfig configureIndexWriter(Analyzer analyzer, Similarity similarity) {
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
         config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
@@ -85,78 +70,66 @@ public class Index {
         return config;
     }
 
-    /**
-     * Parses all collections and combines the results into a single list.
-     *
-     * @return List of parsed DocumentData from all datasets
-     * @throws Exception if parsing fails
-     */
-    private static List<DocumentData> parseAllCollections() throws Exception {
-        List<DocumentData> parsedDocuments = new ArrayList<>();
+    private static List<ObjectData> parseAllCollections() throws Exception {
+        List<ObjectData> parsedDocuments = new ArrayList<>();
 
-        // Instantiate parser objects
+        // instantiate parser objects
         FBparser fbParser = new FBparser();
         FTparser ftParser = new FTparser();
         FR94parser fr94Parser = new FR94parser();
         LAparser laParser = new LAparser();
 
-        // Parse LA Times: Files directly under "latimes"
+        // Parse LA Times
         System.out.println("Parsing LA Times documents...");
-        String laTimesPath = "/vol/bitbucket/ss8923/lucene-search-engine/twentythree/corpus/latimes";
+        String laTimesPath = "/home/azureuser/lucene-search-engine/twentythree/corpus/latimes";
         parsedDocuments.addAll(parseFilesInDirectory(laTimesPath, laParser::parseLATimes));
         System.out.println("LA Times indexing complete!");
 
-        // Parse Financial Times: Nested folders with files in "ft"
+        // Parse Financial Times
         System.out.println("Parsing Financial Times documents...");
-        String ftPath = "/vol/bitbucket/ss8923/lucene-search-engine/twentythree/corpus/ft";
+        String ftPath = "/home/azureuser/lucene-search-engine/twentythree/corpus/ft";
         parsedDocuments.addAll(parseNestedFilesInDirectory(ftPath, ftParser::parseFT));
         System.out.println("Financial Times indexing complete!");
 
-        // Parse FR94: Nested folders with files in "fr94"
+        // Parse FR94
         System.out.println("Parsing FR94 documents...");
-        String fr94Path = "/vol/bitbucket/ss8923/lucene-search-engine/twentythree/corpus/fr94";
+        String fr94Path = "/home/azureuser/lucene-search-engine/twentythree/corpus/fr94";
         parsedDocuments.addAll(parseNestedFilesInDirectory(fr94Path, fr94Parser::parseFR94));
         System.out.println("FR94 indexing complete!");
 
-        // Parse FBIS: Files directly under "fbis"
+        // Parse FBIS
         System.out.println("Parsing FBIS documents...");
-        String fbisPath = "/vol/bitbucket/ss8923/lucene-search-engine/twentythree/corpus/fbis";
+        String fbisPath = "/home/azureuser/lucene-search-engine/twentythree/corpus/fbis";
         parsedDocuments.addAll(parseFilesInDirectory(fbisPath, fbParser::parseFBIS));
         System.out.println("FBIS indexing complete!");
 
         return parsedDocuments;
     }
 
-    /**
-     * Converts a DocumentData object into a Lucene Document.
-     *
-     * @param docData Parsed document data
-     * @return Lucene Document
-     */
-    private static Document createLuceneDocument(DocumentData docData) {
+    private static Document createLuceneDocument(ObjectData docData) {
         Document document = new Document();
 
-        // Add DOCNO as a keyword field (not tokenized)
+        //DOCNO as a keyword field
         if (docData.getDocNo() != null) {
             document.add(new StringField("docno", docData.getDocNo(), Field.Store.YES));
         }
 
-        // Add title as a text field (tokenized for searching)
+        // Add title as a text field 
         if (docData.getTitle() != null) {
             document.add(new TextField("title", docData.getTitle(), Field.Store.YES));
         }
 
-        // Add text content as a large text field (tokenized for searching)
+        // Add text content as a large text field
         if (docData.getText() != null) {
             document.add(new TextField("content", docData.getText(), Field.Store.YES));
         }
 
-        // Add date as a string field (stored but not tokenized)
+        // Add date as a string field 
         if (docData.getDate() != null) {
             document.add(new StringField("date", docData.getDate(), Field.Store.YES));
         }
 
-        // Add author if available (specific to FT documents)
+        // Add author if available
         if (docData.getAuthor() != null) {
             document.add(new TextField("author", docData.getAuthor(), Field.Store.YES));
         }
@@ -164,13 +137,7 @@ public class Index {
         return document;
     }
 
-    /**
-     * Indexes the parsed documents.
-     *
-     * @param writer IndexWriter instance
-     * @param parsedDocuments List of parsed DocumentData
-     */
-    private static void indexDocuments(IndexWriter writer, List<DocumentData> parsedDocuments) {
+    private static void indexDocuments(IndexWriter writer, List<ObjectData> parsedDocuments) {
         parsedDocuments.forEach(docData -> {
             try {
                 Document luceneDoc = createLuceneDocument(docData);
@@ -181,16 +148,8 @@ public class Index {
         });
     }
 
-    /**
-     * Processes files directly under a single directory.
-     *
-     * @param directoryPath Path to the directory
-     * @param parserFunction Function to parse files
-     * @return List of DocumentData objects
-     * @throws Exception if parsing fails
-     */
-    private static List<DocumentData> parseFilesInDirectory(String directoryPath, ParserFunction parserFunction) throws Exception {
-        List<DocumentData> parsedDocuments = new ArrayList<>();
+    private static List<ObjectData> parseFilesInDirectory(String directoryPath, ParserFunction parserFunction) throws Exception {
+        List<ObjectData> parsedDocuments = new ArrayList<>();
         File dir = new File(directoryPath);
 
         if (dir.isDirectory()) {
@@ -203,16 +162,8 @@ public class Index {
         return parsedDocuments;
     }
 
-    /**
-     * Processes files within nested directories.
-     *
-     * @param rootPath Path to the root directory
-     * @param parserFunction Function to parse files
-     * @return List of DocumentData objects
-     * @throws Exception if parsing fails
-     */
-    private static List<DocumentData> parseNestedFilesInDirectory(String rootPath, ParserFunction parserFunction) throws Exception {
-        List<DocumentData> parsedDocuments = new ArrayList<>();
+    private static List<ObjectData> parseNestedFilesInDirectory(String rootPath, ParserFunction parserFunction) throws Exception {
+        List<ObjectData> parsedDocuments = new ArrayList<>();
         File rootDir = new File(rootPath);
 
         if (rootDir.isDirectory()) {

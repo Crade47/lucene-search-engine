@@ -1,20 +1,20 @@
 package com.twenty_three.app.Parser;
 
-public class DocumentData {
+public class ObjectData {
     private String docNo;
     private String title;
     private String text;
     private String date;
     private String author;
 
-    public DocumentData(String docNo, String title, String text, String date) {
+    public ObjectData(String docNo, String title, String text, String date) {
         this.docNo = docNo;
         this.title = title;
         this.text = text;
         this.date = date;
     }
 
-    public DocumentData(String docNo, String title, String text, String date, String author) {
+    public ObjectData(String docNo, String title, String text, String date, String author) {
         this.docNo = docNo;
         this.title = title;
         this.text = text;
@@ -22,7 +22,7 @@ public class DocumentData {
         this.author = author;
     }
 
-    // Getters and setters for all fields
+    // getters and setters for all fields
     public String getDocNo() { return docNo; }
     public String getTitle() { return title; }
     public String getText() { return text; }

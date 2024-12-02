@@ -7,11 +7,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import com.twenty_three.app.Parser.DocumentData;
+import com.twenty_three.app.Parser.ObjectData;
 
 public class FTparser {
-    public List<DocumentData> parseFT(String filePath) throws Exception {
-        List<DocumentData> parsedDocuments = new ArrayList<>();
+    public List<ObjectData> parseFT(String filePath) throws Exception {
+        List<ObjectData> parsedDocuments = new ArrayList<>();
         String filecontent = new String(Files.readAllBytes(Paths.get(filePath)), "UTF-8");
 
         Document soup = Jsoup.parse(filecontent, "", org.jsoup.parser.Parser.xmlParser());
@@ -22,7 +22,7 @@ public class FTparser {
             String date = doc.selectFirst("DATE") != null ? doc.selectFirst("DATE").text() : null;
             String author = doc.selectFirst("BYLINE") != null ? doc.selectFirst("BYLINE").text() : null;
 
-            parsedDocuments.add(new DocumentData(docNo, title, text, date, author));
+            parsedDocuments.add(new ObjectData(docNo, title, text, date, author));
         }
         return parsedDocuments;
     }

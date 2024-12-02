@@ -32,7 +32,7 @@ public class Search {
 
     public static void search() {
         try {
-            // Main logic for setting up search
+           
             String indexPath = "index";
             String topicsFilePath ="topics";
 
@@ -61,9 +61,6 @@ public class Search {
         }
     }
 
-    /**
-     * Processes topics from a BufferedReader and performs search.
-     */
     private static void processTopics(BufferedReader br, MultiFieldQueryParser parser, 
                                        IndexSearcher searcher, Analyzer analyzer, 
                                        IndexReader reader, BufferedWriter writer) throws Exception {
@@ -83,7 +80,7 @@ public class Search {
                         insideDesc = true;
                         queryBuilder.append(line.replace("<desc>", "").replace("Description:", "").trim()).append(" ");
                 } else if (line.startsWith("<narr>")) {
-                        insideDesc = true; // Treat narrative as part of the extended description
+                        insideDesc = true; // treat narrative as part of the extended description
                         queryBuilder.append(line.replace("<narr>", "").replace("Narrative:", "").trim()).append(" ");
                 } else if (line.startsWith("</top>")) {
                         insideDesc = false;
@@ -117,9 +114,6 @@ public class Search {
         }
     }
 
-    /**
-     * Optimises a query using `MoreLikeThisQuery` for relevance feedback.
-     */
     private static Query optimiseQuery(IndexSearcher searcher, Analyzer analyzer, Query inputQuery, IndexReader reader) throws IOException {
         BooleanQuery.Builder optQue = new BooleanQuery.Builder();
         optQue.add(inputQuery, BooleanClause.Occur.SHOULD);
@@ -144,9 +138,6 @@ public class Search {
         return optQue.build();
     }
 
-    /**
-     * Writes search results in TREC format.
-     */
     private static void writeResults(BufferedWriter writer, String topicId, TopDocs results, IndexSearcher searcher) throws Exception {
         for (int i = 0; i < results.scoreDocs.length; i++) {
             ScoreDoc scoreDoc = results.scoreDocs[i];

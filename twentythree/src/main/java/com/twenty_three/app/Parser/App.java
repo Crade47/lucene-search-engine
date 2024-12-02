@@ -16,9 +16,6 @@ import org.apache.lucene.search.similarities.LMJelinekMercerSimilarity;
 import org.apache.lucene.search.similarities.Similarity;
 //import com.twenty_three.app.Parser.MySynonymAnalyzer;
 
-/**
- * Entry point for the application
- */
 public class App {
     public static void main(String[] args) {
         // if (args.length < 2) {
@@ -83,8 +80,8 @@ public class App {
         // }
 
         // Perform indexing and searching
-        Analyzer analyzer = new StandardAnalyzer();
-        Similarity similarity = new BM25Similarity();
+        // Analyzer analyzer = new StandardAnalyzer();
+        // Similarity similarity = new BM25Similarity();
         try {
             Index.index();
             Search.search();

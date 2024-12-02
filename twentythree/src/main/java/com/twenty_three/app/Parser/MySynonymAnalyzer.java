@@ -1,9 +1,6 @@
 package com.twenty_three.app.Parser;
 
 import org.apache.lucene.analysis.*;
-import org.apache.lucene.analysis.classic.ClassicTokenizer;
-import org.apache.lucene.analysis.core.KeywordTokenizer;
-import org.apache.lucene.analysis.core.LetterTokenizer;
 import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.analysis.core.WhitespaceTokenizer;
 import org.apache.lucene.analysis.en.EnglishPossessiveFilter;
